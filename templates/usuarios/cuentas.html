@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block titulo %}Cuentas vinculadas{% endblock %}
+{% block menu_cuentas %}activo{% endblock %}
+
+{% block cuerpo %}
+<main class="contenido">
+    <header class="pagina-cabecera">
+        <h1 class="pagina-titulo">Cuentas vinculadas</h1>
+        <p class="pagina-descripcion">Conecta tus cuentas para que GameRival pueda leer tus estadísticas.</p>
+    </header>
+
+    <div class="cuentas">
+
+        {# ---------------- STEAM ---------------- #}
+        <section class="cuenta{% if steam %} cuenta--conectada{% endif %}">
+            <div class="cuenta__cabeza">
+                <span class="cuenta__logo" aria-hidden="true">S</span>
+                <div>
+                    <h2 class="cuenta__nombre">Steam</h2>
+                    {% if steam %}
+                        <span class="estado estado--ok">Conectado</span>
+                    {% else %}
+                        <span class="estado">No conectado</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if steam %}
+                <div class="dato">
+                    <span class="dato__etiqueta">Perfil</span>
+                    <span class="dato__valor">{{ steam.nombre_visible }}</span>
+                    <span class="dato__extra">SteamID {{ steam.id_externo }}</span>
+                </div>
+                <form method="post" action="{% url 'desconectar' 'steam' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="boton boton--secundario boton--ancho">Desconectar</button>
+                </form>
+            {% else %}
+                <p class="cuenta__texto">Te mandamos a la página de Steam para que inicies sesión. GameRival nunca ve tu contraseña.</p>
+                <a href="{% url 'steam_conectar' %}" class="boton boton--principal boton--ancho">Conectar con Steam</a>
+            {% endif %}
+        </section>
+
+        {# ---------------- RIOT ---------------- #}
+        <section class="cuenta{% if riot %} cuenta--conectada{% endif %}">
+            <div class="cuenta__cabeza">
+                <span class="cuenta__logo" aria-hidden="true">R</span>
+                <div>
+                    <h2 class="cuenta__nombre">Riot Games</h2>
+                    {% if riot %}
+                        <span class="estado estado--ok">Conectado</span>
+                    {% else %}
+                        <span class="estado">No conectado</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if riot %}
+                <div class="dato">
+                    <span class="dato__etiqueta">Riot ID</span>
+                    <span class="dato__valor">{{ riot.nombre_visible }}</span>
+                    <span class="dato__extra">Región {{ riot.region|upper }}</span>
+                </div>
+                <form method="post" action="{% url 'desconectar' 'riot' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="boton boton--secundario boton--ancho">Desconectar</button>
+                </form>
+            {% else %}
+                <form method="post" action="{% url 'riot_conectar' %}" novalidate>
+                    {% csrf_token %}
+
+                    {% if riot_form.non_field_errors %}
+                        <div class="alerta" role="alert">
+                            {% for error in riot_form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% include "partes/campo.html" with campo=riot_form.riot_id etiqueta="Riot ID" icono="iconos/usuario.html" ayuda="Nombre#TAG" %}
+
+                    <div class="campo{% if riot_form.region.errors %} campo--error{% endif %}">
+                        <label class="campo__etiqueta" for="{{ riot_form.region.id_for_label }}">Región</label>
+                        <select class="campo__select" name="{{ riot_form.region.html_name }}" id="{{ riot_form.region.id_for_label }}">
+                            {% for valor, texto in riot_form.region.field.choices %}
+                                <option value="{{ valor }}" {% if riot_form.region.value == valor %}selected{% endif %}>{{ texto }}</option>
+                            {% endfor %}
+                        </select>
+                        {% for error in riot_form.region.errors %}
+                            <p class="campo__error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <button type="submit" class="boton boton--principal boton--ancho">Conectar Riot ID</button>
+                </form>
+            {% endif %}
+        </section>
+    </div>
+
+    <p class="nota">Más plataformas, como Epic Games, quedan para una versión futura.</p>
+</main>
+{% endblock %}

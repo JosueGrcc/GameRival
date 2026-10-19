@@ -1,0 +1,106 @@
+{% load humanize %}
+{# Pestana de Steam del perfil. La incluye inicio.html #}
+<div class="perfil">
+
+    {# ================= COLUMNA PRINCIPAL ================= #}
+    <main class="perfil__principal">
+        <div class="kpis">
+            <div class="kpi">
+                <span class="kpi__etiqueta">Horas jugadas</span>
+                <span class="kpi__valor">{{ horas_totales|floatformat:0|intcomma }}</span>
+                <span class="kpi__nota{% if horas_recientes %} kpi__nota--sube{% endif %}">
+                    {% if horas_recientes %}+{{ horas_recientes|floatformat:0 }} h en 2 semanas{% else %}Sin horas recientes{% endif %}
+                </span>
+            </div>
+            <div class="kpi">
+                <span class="kpi__etiqueta">Juegos jugados</span>
+                <span class="kpi__valor">{{ total_juegos }}</span>
+                <span class="kpi__nota">En tu biblioteca</span>
+            </div>
+            <div class="kpi">
+                <span class="kpi__etiqueta">Logros</span>
+                <span class="kpi__valor">0</span>
+                <span class="kpi__nota">Próximamente</span>
+            </div>
+            <div class="kpi">
+                <span class="kpi__etiqueta">Grupos</span>
+                <span class="kpi__valor">0</span>
+                <span class="kpi__nota">Únete o crea uno</span>
+            </div>
+        </div>
+
+        <section class="panel">
+            <div class="panel__cabeza">
+                <div>
+                    <h2 class="seccion-titulo">Más jugados</h2>
+                    {% if actualizado %}
+                        <p class="panel__nota">Actualizado {{ actualizado|naturaltime|lower }}</p>
+                    {% endif %}
+                </div>
+                {% if steam %}
+                    <form method="post" action="{% url 'actualizar_estadisticas' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="plataforma" value="steam">
+                        <button type="submit" class="boton boton--secundario boton--chico">Actualizar</button>
+                    </form>
+                {% endif %}
+            </div>
+
+            {% if juegos %}
+                <ol class="biblioteca">
+                    {% for fila in juegos|slice:":12" %}
+                        <li class="tarjeta-juego">
+                            <img class="tarjeta-juego__portada" src="{{ fila.juego.imagen_url }}" alt="" loading="lazy" data-portada>
+                            <span class="tarjeta-juego__puesto">#{{ forloop.counter }}</span>
+                            <div class="tarjeta-juego__cuerpo">
+                                <span class="tarjeta-juego__nombre" title="{{ fila.juego.nombre }}">{{ fila.juego.nombre }}</span>
+                                <div class="barra-progreso" aria-hidden="true">
+                                    <span style="width: {{ fila.porcentaje }}%"></span>
+                                </div>
+                                <div class="tarjeta-juego__fila">
+                                    <span class="tarjeta-juego__horas">{{ fila.horas|floatformat:0|intcomma }} h</span>
+                                    {% if fila.horas_recientes %}
+                                        <span class="tarjeta-juego__reciente">+{{ fila.horas_recientes|floatformat:0 }} h recientes</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ol>
+            {% elif steam %}
+                <div class="vacio">
+                    Tu cuenta de Steam ya está vinculada. Dale a <strong>Actualizar</strong> para traer tus juegos.
+                </div>
+            {% else %}
+                <div class="vacio">
+                    Aquí van a aparecer tus juegos. <a href="{% url 'cuentas' %}">Vincula tu cuenta de Steam</a> para empezar.
+                </div>
+            {% endif %}
+        </section>
+    </main>
+
+    {# ================= BARRA LATERAL ================= #}
+    <aside class="perfil__lateral">
+        <section class="panel">
+            <h2 class="seccion-titulo">Jugado recientemente</h2>
+            <ul class="lista-lateral">
+                {% for fila in juegos|dictsortreversed:"horas_recientes" %}
+                    {% if fila.horas_recientes and forloop.counter <= 5 %}
+                        <li class="item-lateral">
+                            <img class="item-lateral__imagen" src="{{ fila.juego.imagen_url }}" alt="" data-portada>
+                            <div class="item-lateral__datos">
+                                <span class="item-lateral__titulo">{{ fila.juego.nombre }}</span>
+                                <span class="item-lateral__detalle item-lateral__detalle--ok">{{ fila.horas_recientes|floatformat:1 }} h en 2 semanas</span>
+                            </div>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            {% if not horas_recientes %}
+                <p class="nota">No has jugado nada en las últimas 2 semanas.</p>
+            {% endif %}
+        </section>
+
+        {% include "perfil/cuentas_lateral.html" %}
+    </aside>
+</div>

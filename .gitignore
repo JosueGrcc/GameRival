@@ -1,0 +1,26 @@
+# Entorno virtual (cada compu crea el suyo)
+.venv/
+venv/
+
+# Secretos: contraseñas de MySQL y llaves de Steam/Riot. NUNCA se suben.
+.env
+
+# Archivos que Python genera solo
+__pycache__/
+*.py[cod]
+
+# Archivos de PyCharm
+.idea/
+
+# Archivos que suben los usuarios (fotos de perfil, etc.)
+media/
+
+# Archivos estáticos recolectados para producción
+staticfiles/
+
+# Base de datos SQLite, por si se llega a crear por accidente
+db.sqlite3
+
+# Basura del sistema operativo
+Thumbs.db
+.DS_Store

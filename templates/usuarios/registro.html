@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block titulo %}Crear cuenta{% endblock %}
+
+{% block cuerpo %}
+<main class="acceso">
+    <section class="tarjeta">
+        <header class="cabecera">
+            <h1 class="titulo">Crear cuenta</h1>
+            <p class="subtitulo">Regístrate y compara tus estadísticas con tus amigos.</p>
+        </header>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alerta" role="alert">
+                    {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+                </div>
+            {% endif %}
+
+            {% include "partes/campo.html" with campo=form.username etiqueta="Nombre de usuario" icono="iconos/usuario.html" ayuda="e.g. NovaRunner_88" autocompletar="username" %}
+            {% include "partes/campo.html" with campo=form.email etiqueta="Email" tipo="email" icono="iconos/correo.html" ayuda="jugador@correo.com" autocompletar="email" %}
+            {% include "partes/campo.html" with campo=form.password1 etiqueta="Contraseña" tipo="password" icono="iconos/llave.html" ayuda="Mínimo 8 caracteres" autocompletar="new-password" contrasena=True %}
+            {% include "partes/campo.html" with campo=form.password2 etiqueta="Confirmar contraseña" tipo="password" icono="iconos/llave.html" ayuda="Repite tu contraseña" autocompletar="new-password" contrasena=True %}
+
+            <div class="campo{% if form.acepto_terminos.errors %} campo--error{% endif %}">
+                <label class="casilla">
+                    <input type="checkbox" name="acepto_terminos" {% if form.acepto_terminos.value %}checked{% endif %}>
+                    Acepto los términos de uso
+                </label>
+                {% for error in form.acepto_terminos.errors %}
+                    <p class="campo__error">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="boton boton--principal boton--ancho">Crear cuenta</button>
+        </form>
+
+        <div class="separador">o</div>
+
+        <p class="pie">¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
+    </section>
+</main>
+{% endblock %}

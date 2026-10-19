@@ -1,0 +1,29 @@
+{% comment %}
+    Un campo de formulario con el estilo de GameRival.
+    Se usa asi:
+        {% include "partes/campo.html" with campo=form.email etiqueta="Email" tipo="email" icono="iconos/correo.html" ayuda="tu@correo.com" %}
+    Si el campo es contrasena, agrega contrasena=True y sale el boton del ojito.
+{% endcomment %}
+<div class="campo{% if campo.errors %} campo--error{% endif %}">
+    <label class="campo__etiqueta" for="{{ campo.id_for_label }}">{{ etiqueta }}</label>
+    <div class="campo__caja">
+        {% include icono %}
+        <input class="campo__input"
+               type="{{ tipo|default:'text' }}"
+               name="{{ campo.html_name }}"
+               id="{{ campo.id_for_label }}"
+               placeholder="{{ ayuda }}"
+               {% if autocompletar %}autocomplete="{{ autocompletar }}"{% endif %}
+               {% if not contrasena %}value="{{ campo.value|default_if_none:'' }}"{% endif %}
+               {% if campo.errors %}aria-invalid="true"{% endif %}
+               required>
+        {% if contrasena %}
+            <button type="button" class="campo__ver" data-ver-contrasena aria-pressed="false" aria-label="Mostrar contraseña">
+                {% include "iconos/ojo.html" %}
+            </button>
+        {% endif %}
+    </div>
+    {% for error in campo.errors %}
+        <p class="campo__error">{{ error }}</p>
+    {% endfor %}
+</div>

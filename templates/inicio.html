@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block titulo %}Perfil{% endblock %}
+{% block menu_perfil %}activo{% endblock %}
+
+{% block cuerpo %}
+<section class="hero">
+    <div class="hero__dentro">
+        <div class="avatar" aria-hidden="true">{{ user.username|slice:":1" }}</div>
+
+        <div class="hero__datos">
+            <h1 class="hero__nombre">{{ user.username }}</h1>
+            <p class="hero__detalle">Miembro desde {{ user.date_joined|date:"F"|lower }} de {{ user.date_joined|date:"Y" }}</p>
+            <div class="chips">
+                <span class="chip chip--activo">En línea</span>
+                <span class="chip">{{ user.cuentas.count }} cuenta{{ user.cuentas.count|pluralize }} vinculada{{ user.cuentas.count|pluralize }}</span>
+            </div>
+        </div>
+
+        {# Cuadro de la derecha: cambia segun la pestana #}
+        {% if plataforma == "lol" %}
+            {% if lol.rango_solo %}
+                <div class="favorito">
+                    <div class="favorito__datos">
+                        <span class="kpi__etiqueta">Clasificatoria Solo/Dúo</span>
+                        <span class="favorito__nombre">{{ lol.rango_solo }}</span>
+                        <span class="favorito__horas">{{ cuenta_riot.nombre_visible }}</span>
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            {% with favorito=juegos.0 %}
+                {% if favorito %}
+                    <div class="favorito">
+                        <img class="favorito__portada" src="{{ favorito.juego.imagen_url }}" alt="" data-portada>
+                        <div class="favorito__datos">
+                            <span class="kpi__etiqueta">Juego favorito</span>
+                            <span class="favorito__nombre">{{ favorito.juego.nombre }}</span>
+                            <span class="favorito__horas">{{ favorito.horas|floatformat:0|intcomma }} h</span>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+    </div>
+
+    {# Pestanas para cambiar de plataforma #}
+    <nav class="pestanas" aria-label="Plataforma">
+        <div class="pestanas__dentro">
+            <a href="?plataforma=steam" class="pestana{% if plataforma == 'steam' %} pestana--activa{% endif %}"
+               {% if plataforma == 'steam' %}aria-current="page"{% endif %}>
+                <span class="pestana__marca pestana__marca--steam" aria-hidden="true">S</span>
+                Steam
+            </a>
+            <a href="?plataforma=lol" class="pestana{% if plataforma == 'lol' %} pestana--activa{% endif %}"
+               {% if plataforma == 'lol' %}aria-current="page"{% endif %}>
+                <span class="pestana__marca pestana__marca--riot" aria-hidden="true">L</span>
+                League of Legends
+            </a>
+        </div>
+    </nav>
+</section>
+
+{% if plataforma == "lol" %}
+    {% include "perfil/lol.html" %}
+{% else %}
+    {% include "perfil/steam.html" %}
+{% endif %}
+{% endblock %}

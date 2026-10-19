@@ -1,0 +1,129 @@
+{% load humanize %}
+{# Pestana de League of Legends del perfil. La incluye inicio.html #}
+<div class="perfil">
+
+    {# ================= COLUMNA PRINCIPAL ================= #}
+    <main class="perfil__principal">
+        {% if not cuenta_riot %}
+            <section class="panel">
+                <h2 class="seccion-titulo">League of Legends</h2>
+                <div class="vacio">
+                    Aquí va a aparecer tu rango, tus campeones y tus partidas.
+                    <a href="{% url 'cuentas' %}">Vincula tu Riot ID</a> para empezar.
+                </div>
+            </section>
+        {% else %}
+            <div class="kpis">
+                <div class="kpi">
+                    <span class="kpi__etiqueta">Victorias</span>
+                    <span class="kpi__valor">{{ lol.resumen.winrate }}%</span>
+                    <span class="kpi__nota">{{ lol.resumen.victorias }}V · {{ lol.resumen.derrotas }}D</span>
+                </div>
+                <div class="kpi">
+                    <span class="kpi__etiqueta">KDA</span>
+                    <span class="kpi__valor">{{ lol.resumen.kda|floatformat:2 }}</span>
+                    <span class="kpi__nota numeros">{{ lol.resumen.asesinatos }} / {{ lol.resumen.muertes }} / {{ lol.resumen.asistencias }}</span>
+                </div>
+                <div class="kpi">
+                    <span class="kpi__etiqueta">Horas recientes</span>
+                    <span class="kpi__valor">{{ lol.resumen.horas|floatformat:1 }}</span>
+                    <span class="kpi__nota">En {{ lol.resumen.partidas }} partida{{ lol.resumen.partidas|pluralize }}</span>
+                </div>
+                <div class="kpi">
+                    <span class="kpi__etiqueta">Nivel</span>
+                    <span class="kpi__valor">{{ lol.nivel|default:"—" }}</span>
+                    <span class="kpi__nota">De invocador</span>
+                </div>
+            </div>
+
+            <section class="panel">
+                <div class="panel__cabeza">
+                    <div>
+                        <h2 class="seccion-titulo">Partidas recientes</h2>
+                        {% if lol.actualizado %}
+                            <p class="panel__nota">Actualizado {{ lol.actualizado|naturaltime|lower }}</p>
+                        {% endif %}
+                    </div>
+                    <form method="post" action="{% url 'actualizar_estadisticas' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="plataforma" value="lol">
+                        <button type="submit" class="boton boton--secundario boton--chico">Actualizar</button>
+                    </form>
+                </div>
+
+                {% if lol.partidas %}
+                    <ol class="partidas">
+                        {% for partida in lol.partidas|slice:":10" %}
+                            <li class="partida{% if partida.victoria %} partida--victoria{% else %} partida--derrota{% endif %}">
+                                <img class="partida__campeon" src="https://cdn.communitydragon.org/latest/champion/{{ partida.campeon_id }}/square" alt="" loading="lazy" data-portada>
+                                <div class="partida__datos">
+                                    <span class="partida__nombre">{{ partida.campeon }}</span>
+                                    <span class="partida__cola">{{ partida.nombre_cola }} · {{ partida.fecha|naturaltime|lower }}</span>
+                                </div>
+                                <div class="partida__kda">
+                                    <span class="numeros">{{ partida.asesinatos }} / <span class="partida__muertes">{{ partida.muertes }}</span> / {{ partida.asistencias }}</span>
+                                    <span class="partida__extra">{{ partida.kda|floatformat:2 }} KDA</span>
+                                </div>
+                                <div class="partida__resultado">
+                                    <span class="partida__estado">{% if partida.victoria %}Victoria{% else %}Derrota{% endif %}</span>
+                                    <span class="partida__extra">{{ partida.minutos }} min</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <div class="vacio">
+                        Tu Riot ID ya está vinculado. Dale a <strong>Actualizar</strong> para traer tus partidas.
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
+    </main>
+
+    {# ================= BARRA LATERAL ================= #}
+    <aside class="perfil__lateral">
+        {% if cuenta_riot %}
+            <section class="panel">
+                <h2 class="seccion-titulo">Clasificatorias</h2>
+                <ul class="lista-lateral">
+                    <li class="item-lateral">
+                        <span class="item-lateral__icono{% if lol.rango_solo %} item-lateral__icono--ok{% endif %}" aria-hidden="true">S</span>
+                        <div class="item-lateral__datos">
+                            <span class="item-lateral__titulo">{{ lol.rango_solo|default:"Sin clasificar" }}</span>
+                            <span class="item-lateral__detalle">Solo/Dúo</span>
+                        </div>
+                    </li>
+                    <li class="item-lateral">
+                        <span class="item-lateral__icono{% if lol.rango_flex %} item-lateral__icono--ok{% endif %}" aria-hidden="true">F</span>
+                        <div class="item-lateral__datos">
+                            <span class="item-lateral__titulo">{{ lol.rango_flex|default:"Sin clasificar" }}</span>
+                            <span class="item-lateral__detalle">Flexible</span>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="panel">
+                <h2 class="seccion-titulo">Campeones recientes</h2>
+                <ul class="lista-lateral">
+                    {% for campeon in lol.campeones %}
+                        <li class="item-lateral">
+                            <img class="item-lateral__campeon" src="https://cdn.communitydragon.org/latest/champion/{{ campeon.campeon_id }}/square" alt="" data-portada>
+                            <div class="item-lateral__datos">
+                                <span class="item-lateral__titulo">{{ campeon.campeon }}</span>
+                                <span class="item-lateral__detalle">
+                                    {{ campeon.jugadas }} partida{{ campeon.jugadas|pluralize }} ·
+                                    <span class="{% if campeon.winrate >= 50 %}item-lateral__detalle--ok{% else %}item-lateral__detalle--mal{% endif %}">{{ campeon.winrate }}% victorias</span>
+                                </span>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="nota">Todavía no hay partidas guardadas.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        {% endif %}
+
+        {% include "perfil/cuentas_lateral.html" %}
+    </aside>
+</div>

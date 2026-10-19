@@ -1,0 +1,18 @@
+{# Panel de cuentas vinculadas para la barra lateral del perfil #}
+<section class="panel">
+    <h2 class="seccion-titulo">Cuentas</h2>
+    <ul class="lista-lateral">
+        {% for cuenta in user.cuentas.all %}
+            <li class="item-lateral">
+                <span class="item-lateral__icono item-lateral__icono--ok" aria-hidden="true">{{ cuenta.get_proveedor_display|slice:":1" }}</span>
+                <div class="item-lateral__datos">
+                    <span class="item-lateral__titulo">{{ cuenta.nombre_visible }}</span>
+                    <span class="item-lateral__detalle item-lateral__detalle--ok">{{ cuenta.get_proveedor_display }} · Conectado</span>
+                </div>
+            </li>
+        {% empty %}
+            <li class="nota">Todavía no vinculas ninguna cuenta.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'cuentas' %}" class="enlace-chico">Administrar cuentas →</a>
+</section>

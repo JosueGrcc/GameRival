@@ -1,0 +1,1277 @@
+/* =========================================================
+   GameRival - estilos generales
+   Estetica tipo Steam, basada en el diseno "Game Stats"
+   ========================================================= */
+
+/* ---------- Colores y medidas (se cambian aqui y se aplican en todo) ---------- */
+:root {
+    --fondo: #121821;          /* fondo de la pagina */
+    --fondo-hondo: #0d1219;    /* barra superior, inputs, barras vacias */
+    --hero: #1b2838;           /* inicio del degradado de las secciones grandes */
+    --panel: #1a2330;          /* tarjetas y paneles */
+    --panel-hover: #202c3b;    /* panel al pasar el mouse */
+    --linea: #1e2835;          /* separadores suaves */
+    --borde: #273345;          /* bordes de inputs y cajas */
+    --borde-fuerte: #2f3e52;
+
+    --texto: #c9d3df;          /* texto normal */
+    --texto-fuerte: #e6edf5;   /* titulos de seccion */
+    --blanco: #ffffff;         /* titulos grandes y numeros */
+    --texto-suave: #8a99ab;    /* etiquetas y textos secundarios */
+    --texto-tenue: #6b7a8c;    /* placeholders y notas */
+
+    --azul: #6fb6ee;           /* acento principal: links, bordes activos */
+    --azul-claro: #8fc6f2;
+    --azul-activo: #2a475e;    /* boton o pestana seleccionada */
+    --azul-activo-borde: #3d6a8c;
+    --azul-chip: #c7e3f7;
+    --verde: #a8d26a;          /* en linea, mejoras, completado */
+    --rojo-riot: #e8735f;      /* derrotas y acento de Riot */
+
+    --error: #f08a7a;
+    --error-fondo: #2a1b20;
+    --error-borde: #5c2d32;
+
+    --fuente: "Barlow", Helvetica, sans-serif;
+    --fuente-numeros: "JetBrains Mono", monospace;
+    --ancho: 1180px;
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: var(--fuente);
+    font-size: 15px;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+}
+
+a {
+    color: var(--azul);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--blanco);
+}
+
+.numeros {
+    font-family: var(--fuente-numeros);
+}
+
+/* ---------- Barra superior ---------- */
+.barra {
+    background: var(--fondo-hondo);
+    border-bottom: 1px solid var(--linea);
+}
+
+.barra__dentro {
+    max-width: var(--ancho);
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.marca {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--texto-fuerte);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.marca:hover {
+    color: var(--blanco);
+}
+
+.marca__logo {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #2a3a4f;
+    border: 2px solid var(--azul);
+}
+
+.menu {
+    display: flex;
+    gap: 24px;
+    align-self: stretch;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    color: var(--texto-suave);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 2px solid transparent;
+}
+
+.menu a:hover,
+.menu a.activo {
+    color: var(--texto-fuerte);
+}
+
+.menu a.activo {
+    border-bottom-color: var(--azul);
+}
+
+.barra__derecha {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 14px;
+}
+
+.barra__usuario {
+    color: var(--azul-chip);
+    font-weight: 600;
+}
+
+/* ---------- Seccion de acceso (login y registro) ---------- */
+.acceso {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 56px 16px 72px;
+    background: linear-gradient(180deg, var(--hero) 0%, var(--fondo) 420px);
+}
+
+.tarjeta {
+    width: 100%;
+    max-width: 440px;
+    background: var(--panel);
+    border-top: 2px solid var(--azul);
+    padding: 32px 32px 28px;
+}
+
+.cabecera {
+    margin-bottom: 24px;
+}
+
+.titulo {
+    margin: 0;
+    color: var(--blanco);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.subtitulo {
+    margin: 6px 0 0;
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+
+/* Etiqueta de seccion: MAYUSCULAS espaciadas, como "HORAS JUGADAS" */
+.seccion-titulo {
+    margin: 0;
+    color: var(--texto-fuerte);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+/* ---------- Formularios ---------- */
+.campo {
+    margin-bottom: 18px;
+}
+
+.campo__etiqueta {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--texto-suave);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.campo__caja {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.campo__icono {
+    position: absolute;
+    left: 12px;
+    width: 17px;
+    height: 17px;
+    color: var(--texto-tenue);
+    pointer-events: none;
+}
+
+.campo__input {
+    width: 100%;
+    height: 44px;
+    padding: 0 44px 0 40px;
+    background: var(--fondo-hondo);
+    border: 1px solid var(--borde);
+    border-radius: 0;
+    color: var(--texto-fuerte);
+    font: inherit;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.campo__input::placeholder {
+    color: var(--texto-tenue);
+}
+
+.campo__input:hover {
+    border-color: var(--borde-fuerte);
+}
+
+.campo__input:focus {
+    outline: none;
+    border-color: var(--azul);
+    background: #0f151e;
+}
+
+.campo__caja:focus-within .campo__icono {
+    color: var(--azul);
+}
+
+.campo--error .campo__input {
+    border-color: var(--error);
+}
+
+.campo__error {
+    margin: 6px 0 0;
+    color: var(--error);
+    font-size: 13px;
+}
+
+/* Boton del ojito para ver la contrasena */
+.campo__ver {
+    position: absolute;
+    right: 6px;
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: 0;
+    color: var(--texto-tenue);
+    cursor: pointer;
+}
+
+.campo__ver:hover {
+    color: var(--texto-fuerte);
+}
+
+.campo__ver:focus-visible {
+    outline: 2px solid var(--azul);
+}
+
+.campo__ver svg {
+    width: 18px;
+    height: 18px;
+}
+
+.campo__ver .icono-oculto,
+.campo__ver[aria-pressed="true"] .icono-visible {
+    display: none;
+}
+
+.campo__ver[aria-pressed="true"] .icono-oculto {
+    display: block;
+}
+
+/* Fila de "mantener sesion" y "olvidaste tu contrasena" */
+.fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0 22px;
+    font-size: 14px;
+}
+
+.casilla {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--texto-suave);
+    cursor: pointer;
+}
+
+.casilla input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--azul);
+    cursor: pointer;
+}
+
+/* ---------- Botones ---------- */
+.boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 20px;
+    border: 1px solid transparent;
+    border-radius: 0;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.boton--ancho {
+    width: 100%;
+}
+
+.boton:focus-visible {
+    outline: 2px solid var(--blanco);
+    outline-offset: 2px;
+}
+
+.boton--principal {
+    background: var(--azul);
+    color: var(--fondo-hondo);
+}
+
+.boton--principal:hover {
+    background: var(--azul-claro);
+}
+
+.boton--secundario {
+    background: var(--azul-activo);
+    border-color: var(--azul-activo-borde);
+    color: var(--blanco);
+}
+
+.boton--secundario:hover {
+    background: #335876;
+}
+
+.boton--chico {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+/* ---------- Separador "o" ---------- */
+.separador {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 24px 0 18px;
+    color: var(--texto-tenue);
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.separador::before,
+.separador::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--borde);
+}
+
+.pie {
+    margin: 0;
+    text-align: center;
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+
+.pie a {
+    font-weight: 600;
+}
+
+/* ---------- Avisos ---------- */
+.alerta {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    background: var(--error-fondo);
+    border-left: 3px solid var(--error);
+    color: var(--error);
+    font-size: 14px;
+}
+
+.alerta p {
+    margin: 0;
+}
+
+/* ---------- Perfil: encabezado grande ---------- */
+.hero {
+    background: linear-gradient(180deg, var(--hero) 0%, var(--fondo) 100%);
+    border-bottom: 1px solid var(--linea);
+}
+
+.hero__dentro {
+    max-width: var(--ancho);
+    margin: 0 auto;
+    padding: 36px 24px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+}
+
+.avatar {
+    width: 112px;
+    height: 112px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    background: repeating-linear-gradient(45deg, #223044 0 6px, #1c2838 6px 12px);
+    border: 2px solid var(--azul);
+    color: var(--blanco);
+    font-size: 44px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.hero__datos {
+    flex: 1;
+    min-width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.hero__nombre {
+    margin: 0;
+    color: var(--blanco);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.hero__detalle {
+    margin: 0;
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+
+.chips {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+}
+
+.chip {
+    padding: 4px 10px;
+    background: var(--panel);
+    border: 1px solid var(--borde);
+    font-size: 12px;
+}
+
+.chip--activo {
+    background: var(--azul-activo);
+    border-color: var(--azul-activo);
+    color: var(--azul-chip);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* ---------- Contenido de paginas internas ---------- */
+.contenido {
+    width: 100%;
+    max-width: var(--ancho);
+    margin: 0 auto;
+    padding: 28px 24px 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 18px;
+    background: var(--panel);
+    border-top: 2px solid var(--azul);
+}
+
+.kpi__etiqueta {
+    color: var(--texto-suave);
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.kpi__valor {
+    color: var(--blanco);
+    font-family: var(--fuente-numeros);
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.kpi__nota {
+    color: var(--texto-tenue);
+    font-size: 13px;
+}
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    background: var(--panel);
+}
+
+.panel p {
+    margin: 0;
+}
+
+.vacio {
+    padding: 28px 20px;
+    border: 1px dashed var(--borde-fuerte);
+    color: var(--texto-suave);
+    text-align: center;
+}
+
+.kpi__nota--sube {
+    color: var(--verde);
+}
+
+/* ---------- Perfil: columna principal + barra lateral ---------- */
+.perfil {
+    width: 100%;
+    max-width: var(--ancho);
+    margin: 0 auto;
+    padding: 28px 24px 64px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 24px;
+    align-items: start;
+}
+
+.perfil__principal,
+.perfil__lateral {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+/* Juego favorito en el encabezado */
+.favorito {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px 12px 12px;
+    background: var(--fondo-hondo);
+    border: 1px solid var(--borde);
+}
+
+.favorito__portada {
+    width: 92px;
+    height: 43px;
+    object-fit: cover;
+    background: var(--panel);
+}
+
+.favorito__datos {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.favorito__nombre {
+    max-width: 180px;
+    color: var(--texto-fuerte);
+    font-size: 14px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.favorito__horas {
+    color: var(--texto-suave);
+    font-family: var(--fuente-numeros);
+    font-size: 13px;
+}
+
+/* Panel con titulo arriba */
+.panel__cabeza {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.panel__nota {
+    margin: 2px 0 0;
+    color: var(--texto-tenue);
+    font-size: 13px;
+}
+
+/* ---------- Pestanas de plataforma (Steam / LoL) ---------- */
+.pestanas {
+    border-top: 1px solid var(--linea);
+}
+
+.pestanas__dentro {
+    max-width: var(--ancho);
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+}
+
+.pestana {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-bottom: 2px solid transparent;
+    color: var(--texto-suave);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.pestana:hover {
+    color: var(--texto-fuerte);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.pestana--activa {
+    color: var(--blanco);
+    background: var(--panel-hover);
+    border-bottom-color: var(--azul);
+}
+
+.pestana__marca {
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    background: var(--fondo-hondo);
+    border: 1px solid var(--borde-fuerte);
+    font-size: 11px;
+    letter-spacing: 0;
+}
+
+.pestana--activa .pestana__marca--steam {
+    border-color: var(--azul);
+    color: var(--azul);
+}
+
+.pestana--activa .pestana__marca--riot {
+    border-color: var(--rojo-riot);
+    color: var(--rojo-riot);
+}
+
+/* ---------- Partidas de League of Legends ---------- */
+.partidas {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.partida {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) auto 96px;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 16px 10px 10px;
+    background: var(--fondo-hondo);
+    border-left: 3px solid var(--borde-fuerte);
+}
+
+.partida--victoria {
+    border-left-color: var(--azul);
+}
+
+.partida--derrota {
+    border-left-color: var(--rojo-riot);
+}
+
+.partida__campeon,
+.item-lateral__campeon {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    background: var(--panel);
+}
+
+.item-lateral__campeon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+}
+
+.partida__datos,
+.partida__kda,
+.partida__resultado {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.partida__nombre {
+    color: var(--blanco);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.partida__cola,
+.partida__extra {
+    color: var(--texto-tenue);
+    font-size: 12px;
+}
+
+.partida__kda {
+    align-items: center;
+    color: var(--texto-fuerte);
+    font-size: 15px;
+}
+
+.partida__muertes {
+    color: var(--error);
+}
+
+.partida__resultado {
+    align-items: flex-end;
+    text-align: right;
+}
+
+.partida__estado {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.partida--victoria .partida__estado {
+    color: var(--azul);
+}
+
+.partida--derrota .partida__estado {
+    color: var(--rojo-riot);
+}
+
+.item-lateral__detalle--mal {
+    color: var(--error);
+}
+
+/* ---------- Biblioteca: cuadricula de tarjetas ---------- */
+.biblioteca {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 14px;
+}
+
+.tarjeta-juego {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--fondo-hondo);
+    border: 1px solid var(--linea);
+    transition: border-color 0.15s, transform 0.15s;
+}
+
+.tarjeta-juego:hover {
+    border-color: var(--azul-activo-borde);
+    transform: translateY(-2px);
+}
+
+.tarjeta-juego__portada {
+    display: block;
+    width: 100%;
+    aspect-ratio: 460 / 215;
+    object-fit: cover;
+    background: repeating-linear-gradient(45deg, #223044 0 6px, #1c2838 6px 12px);
+}
+
+.tarjeta-juego__puesto {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    min-width: 26px;
+    padding: 2px 6px;
+    background: rgba(13, 18, 25, 0.85);
+    color: var(--texto-fuerte);
+    font-family: var(--fuente-numeros);
+    font-size: 12px;
+    text-align: center;
+}
+
+.tarjeta-juego__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 14px 14px;
+}
+
+.tarjeta-juego__nombre {
+    color: var(--blanco);
+    font-size: 15px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tarjeta-juego__fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.tarjeta-juego__horas {
+    color: var(--texto-fuerte);
+    font-family: var(--fuente-numeros);
+    font-size: 15px;
+}
+
+.tarjeta-juego__reciente {
+    color: var(--verde);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.barra-progreso {
+    height: 4px;
+    background: var(--panel);
+}
+
+.barra-progreso span {
+    display: block;
+    height: 100%;
+    background: var(--azul);
+}
+
+/* ---------- Barra lateral ---------- */
+.lista-lateral {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.item-lateral {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.item-lateral__imagen {
+    width: 64px;
+    height: 30px;
+    flex-shrink: 0;
+    object-fit: cover;
+    background: var(--fondo-hondo);
+}
+
+.item-lateral__icono {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    background: var(--fondo-hondo);
+    border-left: 3px solid var(--borde-fuerte);
+    color: var(--texto-fuerte);
+    font-weight: 700;
+}
+
+.item-lateral__icono--ok {
+    border-left-color: var(--verde);
+}
+
+.item-lateral__datos {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.item-lateral__titulo {
+    color: var(--texto-fuerte);
+    font-size: 14px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item-lateral__detalle {
+    color: var(--texto-suave);
+    font-size: 12px;
+}
+
+.item-lateral__detalle--ok {
+    color: var(--verde);
+}
+
+.enlace-chico {
+    font-size: 13px;
+}
+
+/* ---------- Mensajes (avisos despues de una accion) ---------- */
+.mensajes {
+    max-width: var(--ancho);
+    width: 100%;
+    margin: 20px auto 0;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mensaje {
+    margin: 0;
+    padding: 12px 16px;
+    background: var(--panel);
+    border-left: 3px solid var(--azul);
+    color: var(--texto-fuerte);
+    font-size: 14px;
+}
+
+.mensaje--success {
+    border-left-color: var(--verde);
+}
+
+.mensaje--error {
+    border-left-color: var(--error);
+    background: var(--error-fondo);
+    color: var(--error);
+}
+
+/* ---------- Encabezado de pagina interna ---------- */
+.pagina-cabecera {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pagina-titulo {
+    margin: 0;
+    color: var(--blanco);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.pagina-descripcion {
+    margin: 0;
+    color: var(--texto-suave);
+    font-size: 15px;
+}
+
+/* ---------- Cuentas vinculadas ---------- */
+.cuentas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    align-items: start;
+}
+
+.cuenta {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 20px;
+    background: var(--panel);
+    border-top: 2px solid var(--borde-fuerte);
+}
+
+.cuenta--conectada {
+    border-top-color: var(--verde);
+}
+
+.cuenta__cabeza {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.cuenta__logo {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    background: var(--fondo-hondo);
+    border: 1px solid var(--borde-fuerte);
+    color: var(--texto-fuerte);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.cuenta__nombre {
+    margin: 0;
+    color: var(--blanco);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--texto-tenue);
+    font-size: 13px;
+}
+
+.estado::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--texto-tenue);
+}
+
+.estado--ok {
+    color: var(--verde);
+}
+
+.estado--ok::before {
+    background: var(--verde);
+}
+
+/* Datos de la cuenta conectada */
+.dato {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 14px;
+    background: var(--fondo-hondo);
+    border-left: 3px solid var(--azul);
+}
+
+.dato__etiqueta {
+    color: var(--texto-suave);
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.dato__valor {
+    color: var(--blanco);
+    font-size: 17px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.dato__extra {
+    color: var(--texto-tenue);
+    font-family: var(--fuente-numeros);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.cuenta__texto {
+    margin: 0;
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+
+.cuenta form .campo:last-of-type {
+    margin-bottom: 16px;
+}
+
+/* Lista desplegable con el estilo de los inputs */
+.campo__select {
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    background: var(--fondo-hondo);
+    border: 1px solid var(--borde);
+    border-radius: 0;
+    color: var(--texto-fuerte);
+    font: inherit;
+    cursor: pointer;
+}
+
+.campo__select:focus {
+    outline: none;
+    border-color: var(--azul);
+}
+
+.campo--sin-icono .campo__input {
+    padding-left: 12px;
+}
+
+.nota {
+    margin: 0;
+    color: var(--texto-tenue);
+    font-size: 13px;
+}
+
+/* ---------- Pantallas medianas: la barra lateral baja ---------- */
+@media (max-width: 980px) {
+    .perfil {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil__lateral {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        align-items: start;
+    }
+}
+
+/* ---------- Celular y tablet ---------- */
+@media (max-width: 720px) {
+    .barra__dentro {
+        height: auto;
+        min-height: 56px;
+        padding: 10px 16px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .menu {
+        order: 3;
+        width: 100%;
+        gap: 18px;
+        overflow-x: auto;
+    }
+
+    .menu a {
+        padding: 8px 0;
+    }
+
+    .barra__usuario {
+        display: none;
+    }
+
+    .hero__dentro,
+    .contenido,
+    .mensajes {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .avatar {
+        width: 84px;
+        height: 84px;
+        font-size: 34px;
+    }
+
+    .hero__nombre {
+        font-size: 26px;
+    }
+
+    .perfil {
+        padding: 20px 16px 48px;
+    }
+
+    .biblioteca {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .tarjeta-juego__cuerpo {
+        padding: 10px;
+    }
+
+    .tarjeta-juego__fila {
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .favorito {
+        width: 100%;
+    }
+
+    .pestanas__dentro {
+        padding: 0 8px;
+    }
+
+    .pestana {
+        padding: 12px 14px;
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+
+    .partida {
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+        gap: 10px;
+        padding-right: 12px;
+    }
+
+    .partida__campeon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .partida__kda {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .acceso {
+        padding-top: 28px;
+    }
+
+    .tarjeta {
+        padding: 26px 20px 22px;
+    }
+
+    .titulo {
+        font-size: 26px;
+    }
+
+    .cuentas {
+        grid-template-columns: 1fr;
+    }
+
+    .fila {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

@@ -1,0 +1,59 @@
+{% load static %}<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block titulo %}GameRival{% endblock %} · GameRival</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/gamerival.css' %}">
+</head>
+<body>
+    <header class="barra">
+        <div class="barra__dentro">
+            <a class="marca" href="{% url 'inicio' %}">
+                <span class="marca__logo"></span>
+                GameRival
+            </a>
+
+            {% if user.is_authenticated %}
+                {% comment %} Los "#" son pantallas que todavia no hacemos {% endcomment %}
+                <nav class="menu">
+                    <a href="{% url 'inicio' %}" class="{% block menu_perfil %}{% endblock %}">Perfil</a>
+                    <a href="{% url 'cuentas' %}" class="{% block menu_cuentas %}{% endblock %}">Cuentas</a>
+                    <a href="#">Grupos</a>
+                    <a href="#">Rankings</a>
+                </nav>
+
+                <div class="barra__derecha">
+                    <span class="barra__usuario">{{ user.username }}</span>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="boton boton--secundario boton--chico">Salir</button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="barra__derecha">
+                    <a href="{% url 'login' %}">Iniciar sesión</a>
+                    <a href="{% url 'registro' %}" class="boton boton--secundario boton--chico">Crear cuenta</a>
+                </div>
+            {% endif %}
+        </div>
+    </header>
+
+    {% comment %} Avisos de una sola vez, como "Cuenta de Steam vinculada" {% endcomment %}
+    {% if messages %}
+        <div class="mensajes" role="status">
+            {% for mensaje in messages %}
+                <p class="mensaje mensaje--{{ mensaje.tags }}">{{ mensaje }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% block cuerpo %}{% endblock %}
+
+    <script src="{% static 'js/gamerival.js' %}"></script>
+</body>
+</html>
