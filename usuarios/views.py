@@ -10,6 +10,8 @@ from . import riot, steam
 from .forms import RegistroForm, RiotForm
 from .models import CuentaVinculada
 from juegos.estadisticas import perfil_lol, ultimas_estadisticas
+from insignias.reglas import revisar_insignias
+from insignias.views import avisar_nuevas
 
 
 class IniciarSesionView(LoginView):
@@ -44,7 +46,13 @@ def inicio(request):
     if plataforma not in ('steam', 'lol'):
         plataforma = 'steam'
 
-    contexto = {'plataforma': plataforma}
+    progreso, nuevas = revisar_insignias(request.user)
+    avisar_nuevas(request, nuevas)
+    contexto = {
+        'plataforma': plataforma,
+        'insignias_obtenidas': sum(1 for fila in progreso if fila['obtenida']),
+        'insignias_total': len(progreso),
+    }
 
     if plataforma == 'lol':
         cuenta_riot = request.user.cuentas.filter(proveedor='riot').first()

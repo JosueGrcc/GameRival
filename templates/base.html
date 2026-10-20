@@ -19,12 +19,11 @@
             </a>
 
             {% if user.is_authenticated %}
-                {% comment %} Los "#" son pantallas que todavia no hacemos {% endcomment %}
                 <nav class="menu">
                     <a href="{% url 'inicio' %}" class="{% block menu_perfil %}{% endblock %}">Perfil</a>
                     <a href="{% url 'cuentas' %}" class="{% block menu_cuentas %}{% endblock %}">Cuentas</a>
-                    <a href="#">Grupos</a>
-                    <a href="#">Rankings</a>
+                    <a href="{% url 'grupos' %}" class="{% block menu_grupos %}{% endblock %}">Grupos</a>
+                    <a href="{% url 'insignias' %}" class="{% block menu_insignias %}{% endblock %}">Insignias</a>
                 </nav>
 
                 <div class="barra__derecha">

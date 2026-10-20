@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block titulo %}Mis grupos{% endblock %}
+{% block menu_grupos %}activo{% endblock %}
+
+{% block cuerpo %}
+<div class="perfil">
+
+    {# ================= COLUMNA PRINCIPAL ================= #}
+    <main class="perfil__principal">
+        <header class="pagina-cabecera">
+            <h1 class="pagina-titulo">Mis grupos</h1>
+            <p class="pagina-descripcion">Compara tus estadísticas de Steam y League of Legends con tus amigos.</p>
+        </header>
+
+        {% if grupos %}
+            <ul class="grupos">
+                {% for grupo in grupos %}
+                    <li class="grupo-tarjeta">
+                        <div class="grupo-tarjeta__cabeza">
+                            <span class="grupo-tarjeta__icono" aria-hidden="true">{{ grupo.nombre|slice:":1"|upper }}</span>
+                            <div class="grupo-tarjeta__datos">
+                                <h2 class="grupo-tarjeta__nombre">{{ grupo.nombre }}</h2>
+                                <span class="grupo-tarjeta__detalle">
+                                    {{ grupo.num_miembros }} miembro{{ grupo.num_miembros|pluralize }}
+                                    {% if grupo.mi_rol == "admin" %}· <span class="etiqueta-admin">Admin</span>{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <a href="{% url 'grupo_detalle' grupo.pk %}" class="boton boton--secundario boton--chico boton--ancho">Ver grupo</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <section class="panel">
+                <div class="vacio">
+                    Todavía no estás en ningún grupo. Crea uno y comparte el código, o únete con el código de un amigo.
+                </div>
+            </section>
+        {% endif %}
+    </main>
+
+    {# ================= BARRA LATERAL: CREAR Y UNIRSE ================= #}
+    <aside class="perfil__lateral">
+        <section class="panel">
+            <h2 class="seccion-titulo">Crear grupo</h2>
+            <form method="post" action="{% url 'grupo_crear' %}" novalidate>
+                {% csrf_token %}
+                <div class="campo campo--sin-icono{% if grupo_form.nombre.errors %} campo--error{% endif %}">
+                    <label class="campo__etiqueta" for="{{ grupo_form.nombre.id_for_label }}">Nombre del grupo</label>
+                    <div class="campo__caja">
+                        <input class="campo__input" type="text" name="{{ grupo_form.nombre.html_name }}"
+                               id="{{ grupo_form.nombre.id_for_label }}" maxlength="50"
+                               placeholder="e.g. Los del server"
+                               value="{{ grupo_form.nombre.value|default_if_none:'' }}" required>
+                    </div>
+                    {% for error in grupo_form.nombre.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+                </div>
+                <button type="submit" class="boton boton--principal boton--ancho">Crear grupo</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2 class="seccion-titulo">Unirme con código</h2>
+            <form method="post" action="{% url 'grupo_unirse' %}" novalidate>
+                {% csrf_token %}
+                <div class="campo campo--sin-icono{% if unirse_form.codigo.errors %} campo--error{% endif %}">
+                    <label class="campo__etiqueta" for="{{ unirse_form.codigo.id_for_label }}">Código de invitación</label>
+                    <div class="campo__caja">
+                        <input class="campo__input campo__input--codigo" type="text" name="{{ unirse_form.codigo.html_name }}"
+                               id="{{ unirse_form.codigo.id_for_label }}" maxlength="6" autocomplete="off"
+                               placeholder="K7QX2M"
+                               value="{{ unirse_form.codigo.value|default_if_none:'' }}" required>
+                    </div>
+                    {% for error in unirse_form.codigo.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+                </div>
+                <button type="submit" class="boton boton--secundario boton--ancho">Unirme</button>
+            </form>
+        </section>
+    </aside>
+</div>
+{% endblock %}

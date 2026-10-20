@@ -29,3 +29,35 @@ document.querySelectorAll("img[data-portada]").forEach(function (imagen) {
         usarRespaldo(imagen);
     });
 });
+
+// Formularios que tardan (como Actualizar): al enviarlos se desactiva el boton
+// para que no se manden dos veces si la persona da clic otra vez.
+document.querySelectorAll("form[data-un-solo-envio]").forEach(function (formulario) {
+    formulario.addEventListener("submit", function () {
+        var boton = formulario.querySelector("button[type=submit]");
+        if (boton) {
+            boton.disabled = true;
+            boton.textContent = "Actualizando…";
+        }
+    });
+});
+
+// Boton "Copiar": copia el texto del elemento indicado (como el codigo del grupo).
+document.querySelectorAll("[data-copiar]").forEach(function (boton) {
+    boton.addEventListener("click", function () {
+        var texto = document.querySelector(boton.dataset.copiar).textContent.trim();
+        navigator.clipboard.writeText(texto).then(function () {
+            boton.textContent = "¡Copiado!";
+            setTimeout(function () { boton.textContent = "Copiar"; }, 2000);
+        });
+    });
+});
+
+// Formularios que piden confirmacion antes de enviarse (como Salir del grupo).
+document.querySelectorAll("form[data-confirmar]").forEach(function (formulario) {
+    formulario.addEventListener("submit", function (evento) {
+        if (!window.confirm(formulario.dataset.confirmar)) {
+            evento.preventDefault();
+        }
+    });
+});

@@ -144,7 +144,7 @@ def sincronizar_lol(cuenta, cantidad=20):
         ))
 
     with transaction.atomic():
-        PartidaLoL.objects.bulk_create(nuevas)
+        PartidaLoL.objects.bulk_create(nuevas, ignore_conflicts=True)
 
         juego, _ = Juego.objects.get_or_create(
             plataforma='riot',

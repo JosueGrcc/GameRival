@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block titulo %}Insignias{% endblock %}
+{% block menu_insignias %}activo{% endblock %}
+
+{% block cuerpo %}
+<main class="contenido">
+    <header class="pagina-cabecera">
+        <h1 class="pagina-titulo">Insignias</h1>
+        <p class="pagina-descripcion">Logros que ganas jugando en Steam y League of Legends, y compitiendo con tus grupos.</p>
+    </header>
+
+    {# Progreso general #}
+    <section class="panel progreso-general">
+        <div class="panel__cabeza">
+            <h2 class="seccion-titulo">Progreso de insignias</h2>
+            <span class="progreso-general__cuenta numeros">{{ obtenidas }} / {{ total }}</span>
+        </div>
+        <div class="barra-progreso barra-progreso--grande" aria-hidden="true">
+            <span style="width: {{ porcentaje }}%"></span>
+        </div>
+    </section>
+
+    <ul class="insignias">
+        {% for fila in progreso %}
+            <li class="insignia{% if fila.obtenida %} insignia--obtenida{% endif %}">
+                <span class="insignia__icono numeros" aria-hidden="true">{{ fila.insignia.icono }}</span>
+                <h2 class="insignia__nombre">{{ fila.insignia.nombre }}</h2>
+                <p class="insignia__descripcion">{{ fila.insignia.descripcion }}</p>
+
+                {% if fila.obtenida %}
+                    <span class="insignia__estado insignia__estado--ok">Obtenida</span>
+                    <span class="insignia__detalle">
+                        {{ fila.obtenida.fecha|date:"j M Y"|lower }}
+                        {% if fila.obtenida.grupo %}· en {{ fila.obtenida.grupo.nombre }}{% endif %}
+                    </span>
+                {% else %}
+                    <div class="insignia__progreso">
+                        <div class="barra-progreso" aria-hidden="true">
+                            <span style="width: {{ fila.porcentaje }}%"></span>
+                        </div>
+                        <span class="insignia__detalle numeros">{{ fila.actual|floatformat:0 }} / {{ fila.meta }}</span>
+                    </div>
+                    <span class="insignia__estado">Bloqueada</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</main>
+{% endblock %}

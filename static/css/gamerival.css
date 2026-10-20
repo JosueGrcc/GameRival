@@ -702,6 +702,53 @@ a:hover {
     color: var(--rojo-riot);
 }
 
+/* Etiquetas "Esta semana" / "General" entre las pestanas del grupo */
+.pestanas__grupo {
+    align-self: center;
+    padding: 0 8px 0 0;
+    color: var(--texto-tenue);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.pestanas--compactas .pestana {
+    padding-left: 14px;
+    padding-right: 14px;
+    letter-spacing: 1px;
+}
+
+.pestanas__grupo--separado {
+    margin-left: 16px;
+    padding-left: 20px;
+    border-left: 1px solid var(--borde);
+}
+
+/* ---------- Semana del ranking ---------- */
+.semana {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    text-align: right;
+}
+
+.semana__fechas {
+    font-family: var(--fuente-numeros);
+    color: var(--texto-fuerte);
+    font-size: 13px;
+}
+
+.semana__restan {
+    color: var(--verde);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
 /* ---------- Partidas de League of Legends ---------- */
 .partidas {
     margin: 0;
@@ -742,6 +789,7 @@ a:hover {
     width: 34px;
     height: 34px;
     flex-shrink: 0;
+    background: var(--fondo-hondo);
 }
 
 .partida__datos,
@@ -956,6 +1004,342 @@ a:hover {
 
 .enlace-chico {
     font-size: 13px;
+}
+
+/* ---------- Grupos ---------- */
+.grupos {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+}
+
+.grupo-tarjeta {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px;
+    background: var(--panel);
+    border-top: 2px solid var(--azul);
+}
+
+.grupo-tarjeta__cabeza {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.grupo-tarjeta__icono {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    background: repeating-linear-gradient(45deg, #223044 0 6px, #1c2838 6px 12px);
+    border: 1px solid var(--azul);
+    color: var(--blanco);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.grupo-tarjeta__datos {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.grupo-tarjeta__nombre {
+    margin: 0;
+    color: var(--blanco);
+    font-size: 18px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.grupo-tarjeta__detalle {
+    color: var(--texto-suave);
+    font-size: 13px;
+}
+
+.etiqueta-admin {
+    color: var(--verde);
+    font-weight: 600;
+}
+
+.campo__input--codigo {
+    font-family: var(--fuente-numeros);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+/* Codigo de invitacion en el encabezado del grupo */
+.codigo-invitacion {
+    gap: 18px;
+}
+
+.codigo-invitacion__codigo {
+    color: var(--blanco);
+    font-size: 22px;
+    letter-spacing: 4px;
+}
+
+/* ---------- Grafica de barras del ranking ---------- */
+.grafica {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    height: 240px;
+    padding-top: 6px;
+    border-bottom: 1px solid var(--borde);
+}
+
+.grafica__columna {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.grafica__valor {
+    color: var(--texto-fuerte);
+    font-size: 12px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.grafica__carril {
+    flex: 1;
+    width: 100%;
+    max-width: 72px;
+    display: flex;
+    align-items: flex-end;
+}
+
+.grafica__barra {
+    display: block;
+    width: 100%;
+    min-height: 3px;
+    background: var(--azul-activo-borde);
+}
+
+.grafica__barra--primero {
+    background: var(--azul);
+}
+
+.grafica__barra--tu {
+    background: var(--verde);
+}
+
+.grafica__nombre {
+    max-width: 100%;
+    padding-bottom: 8px;
+    color: var(--texto-suave);
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.grafica__nombre--tu {
+    color: var(--verde);
+    font-weight: 700;
+}
+
+/* ---------- Lista del ranking ---------- */
+.ranking {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ranking__fila {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px 12px 12px;
+    background: var(--fondo-hondo);
+    border-left: 3px solid transparent;
+}
+
+.ranking__fila--tu {
+    background: #1d2a1f;
+    border-left-color: var(--verde);
+}
+
+.ranking__puesto {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    background: var(--panel);
+    color: var(--texto-fuerte);
+    font-family: var(--fuente-numeros);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Medallas: oro, plata y bronce */
+.ranking__puesto--1 { background: #c9a227; color: #1c1505; }
+.ranking__puesto--2 { background: #aab4bf; color: #121821; }
+.ranking__puesto--3 { background: #b06d3c; color: #1c0f05; }
+
+.ranking__nombre {
+    color: var(--blanco);
+    font-size: 15px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ranking__tu {
+    margin-left: 6px;
+    padding: 1px 6px;
+    background: var(--verde);
+    color: var(--fondo-hondo);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.ranking__valor {
+    color: var(--texto-fuerte);
+    font-size: 15px;
+    text-align: right;
+}
+
+/* Boton para acciones que no se pueden deshacer */
+.boton--peligro {
+    background: transparent;
+    border-color: var(--error-borde);
+    color: var(--error);
+}
+
+.boton--peligro:hover {
+    background: var(--error-fondo);
+}
+
+/* ---------- Insignias ---------- */
+.kpi__de {
+    color: var(--texto-tenue);
+    font-size: 18px;
+}
+
+.progreso-general__cuenta {
+    color: var(--blanco);
+    font-size: 18px;
+}
+
+.barra-progreso--grande {
+    height: 8px;
+}
+
+.insignias {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+}
+
+.insignia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 22px 16px 18px;
+    background: var(--panel);
+    border: 1px solid var(--linea);
+    text-align: center;
+}
+
+.insignia--obtenida {
+    border-color: var(--verde);
+    background: linear-gradient(180deg, #1f2d22 0%, var(--panel) 70%);
+}
+
+.insignia__icono {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 4px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 2px dashed var(--borde-fuerte);
+    background: var(--fondo-hondo);
+    color: var(--texto-tenue);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.insignia--obtenida .insignia__icono {
+    border: 3px solid var(--verde);
+    color: var(--blanco);
+}
+
+.insignia__nombre {
+    margin: 0;
+    color: var(--texto-suave);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.insignia--obtenida .insignia__nombre {
+    color: var(--blanco);
+}
+
+.insignia__descripcion {
+    flex: 1;
+    margin: 0;
+    color: var(--texto-tenue);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.insignia__progreso {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.insignia__estado {
+    margin-top: 4px;
+    padding: 3px 10px;
+    background: var(--fondo-hondo);
+    color: var(--texto-tenue);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.insignia__estado--ok {
+    background: var(--verde);
+    color: var(--fondo-hondo);
+}
+
+.insignia__detalle {
+    color: var(--texto-tenue);
+    font-size: 12px;
 }
 
 /* ---------- Mensajes (avisos despues de una accion) ---------- */
@@ -1237,6 +1621,11 @@ a:hover {
         letter-spacing: 1px;
     }
 
+    .pestanas__grupo--separado {
+        margin-left: 8px;
+        padding-left: 12px;
+    }
+
     .partida {
         grid-template-columns: 40px minmax(0, 1fr) auto;
         gap: 10px;
@@ -1250,6 +1639,28 @@ a:hover {
 
     .partida__kda {
         display: none;
+    }
+
+    .grafica {
+        gap: 6px;
+        height: 200px;
+    }
+
+    .grafica__valor {
+        font-size: 10px;
+    }
+
+    .codigo-invitacion__codigo {
+        font-size: 18px;
+    }
+
+    .insignias {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .insignia {
+        padding: 16px 10px 14px;
     }
 }
 
@@ -1274,4 +1685,10 @@ a:hover {
         flex-direction: column;
         align-items: flex-start;
     }
+}
+
+/* Boton desactivado mientras se envia */
+.boton:disabled {
+    opacity: 0.6;
+    cursor: wait;
 }

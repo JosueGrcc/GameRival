@@ -18,14 +18,14 @@
                 <span class="kpi__nota">En tu biblioteca</span>
             </div>
             <div class="kpi">
-                <span class="kpi__etiqueta">Logros</span>
-                <span class="kpi__valor">0</span>
-                <span class="kpi__nota">Próximamente</span>
+                <span class="kpi__etiqueta">Insignias</span>
+                <span class="kpi__valor">{{ insignias_obtenidas }}<span class="kpi__de">/{{ insignias_total }}</span></span>
+                <span class="kpi__nota"><a href="{% url 'insignias' %}">Ver mis insignias</a></span>
             </div>
             <div class="kpi">
                 <span class="kpi__etiqueta">Grupos</span>
-                <span class="kpi__valor">0</span>
-                <span class="kpi__nota">Únete o crea uno</span>
+                <span class="kpi__valor">{{ user.grupos.count }}</span>
+                <span class="kpi__nota"><a href="{% url 'grupos' %}">Ver mis grupos</a></span>
             </div>
         </div>
 
@@ -38,7 +38,7 @@
                     {% endif %}
                 </div>
                 {% if steam %}
-                    <form method="post" action="{% url 'actualizar_estadisticas' %}">
+                    <form method="post" action="{% url 'actualizar_estadisticas' %}" data-un-solo-envio>
                         {% csrf_token %}
                         <input type="hidden" name="plataforma" value="steam">
                         <button type="submit" class="boton boton--secundario boton--chico">Actualizar</button>

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ grupo.nombre }}{% endblock %}
+{% block menu_grupos %}activo{% endblock %}
+
+{% block cuerpo %}
+<section class="hero">
+    <div class="hero__dentro">
+        <div class="avatar" aria-hidden="true">{{ grupo.nombre|slice:":1"|upper }}</div>
+
+        <div class="hero__datos">
+            <h1 class="hero__nombre">{{ grupo.nombre }}</h1>
+            <p class="hero__detalle">
+                {{ membresias|length }} miembro{{ membresias|length|pluralize }}
+                · Creado {{ grupo.fecha_creacion|date:"j \d\e F \d\e Y"|lower }}
+            </p>
+        </div>
+
+        <div class="favorito codigo-invitacion">
+            <div class="favorito__datos">
+                <span class="kpi__etiqueta">Código de invitación</span>
+                <span class="codigo-invitacion__codigo numeros" id="codigo-grupo">{{ grupo.codigo }}</span>
+            </div>
+            <button type="button" class="boton boton--secundario boton--chico" data-copiar="#codigo-grupo">Copiar</button>
+        </div>
+    </div>
+
+    {# Filtro: que se compara. Arriba lo de esta semana, luego lo general #}
+    <nav class="pestanas pestanas--compactas" aria-label="Comparar por">
+        <div class="pestanas__dentro">
+            <span class="pestanas__grupo">Esta semana</span>
+            {% for clave, datos in metricas.items %}
+                {% if datos.periodo == 'semana' %}
+                    <a href="?metrica={{ clave }}" class="pestana{% if clave == metrica %} pestana--activa{% endif %}"
+                       {% if clave == metrica %}aria-current="page"{% endif %}>{{ datos.titulo }}</a>
+                {% endif %}
+            {% endfor %}
+
+            <span class="pestanas__grupo pestanas__grupo--separado">General</span>
+            {% for clave, datos in metricas.items %}
+                {% if datos.periodo == 'general' %}
+                    <a href="?metrica={{ clave }}" class="pestana{% if clave == metrica %} pestana--activa{% endif %}"
+                       {% if clave == metrica %}aria-current="page"{% endif %}>{{ datos.titulo }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </nav>
+</section>
+
+<div class="perfil">
+
+    {# ================= COLUMNA PRINCIPAL ================= #}
+    <main class="perfil__principal">
+        <section class="panel">
+            <div class="panel__cabeza">
+                <div>
+                    <h2 class="seccion-titulo">{{ metrica_actual.titulo }}</h2>
+                    <p class="panel__nota">{{ metrica_actual.detalle }}</p>
+                </div>
+                {% if metrica_actual.periodo == 'semana' %}
+                    <div class="semana">
+                        <span class="semana__fechas">{{ semana.inicio|date:"j M"|lower }} – {{ semana.fin|date:"j M"|lower }}</span>
+                        <span class="semana__restan">
+                            {% if semana.dias_restantes == 1 %}Último día{% else %}Quedan {{ semana.dias_restantes }} días{% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if ranking %}
+                {# Grafica de barras: los primeros 8 #}
+                <div class="grafica" role="img" aria-label="Comparación de {{ metrica_actual.titulo }} entre los miembros">
+                    {% for fila in ranking|slice:":8" %}
+                        <div class="grafica__columna">
+                            <span class="grafica__valor numeros">{{ fila.texto }}</span>
+                            <div class="grafica__carril">
+                                <span class="grafica__barra{% if fila.usuario == user %} grafica__barra--tu{% elif fila.puesto == 1 %} grafica__barra--primero{% endif %}"
+                                      style="height: {{ fila.porcentaje }}%"></span>
+                            </div>
+                            <span class="grafica__nombre{% if fila.usuario == user %} grafica__nombre--tu{% endif %}">
+                                {% if fila.usuario == user %}Tú{% else %}{{ fila.usuario.username }}{% endif %}
+                            </span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% if metrica_actual.periodo == 'semana' %}
+                <p class="nota">
+                    El ranking se reinicia cada lunes. Solo cuenta lo que ya trajiste con <strong>Actualizar</strong> en tu perfil,
+                    así que actualiza seguido para no quedarte atrás.
+                </p>
+            {% endif %}
+            {% else %}
+                <div class="vacio">
+                    Nadie del grupo tiene datos de esto todavía. Cada quien tiene que vincular su cuenta y darle Actualizar en su perfil.
+                </div>
+            {% endif %}
+        </section>
+
+        {% if ranking %}
+            <section class="panel">
+                <h2 class="seccion-titulo">Ranking</h2>
+                <ol class="ranking">
+                    {% for fila in ranking %}
+                        <li class="ranking__fila{% if fila.usuario == user %} ranking__fila--tu{% endif %}">
+                            <span class="ranking__puesto ranking__puesto--{{ fila.puesto }}">{{ fila.puesto }}</span>
+                            <span class="ranking__nombre">
+                                {{ fila.usuario.username }}{% if fila.usuario == user %} <span class="ranking__tu">Tú</span>{% endif %}
+                            </span>
+                            <span class="ranking__valor numeros">{{ fila.texto }}</span>
+                        </li>
+                    {% endfor %}
+                </ol>
+                {% if sin_datos %}
+                    <p class="nota">
+                        Sin datos:
+                        {% for fila in sin_datos %}{{ fila.usuario.username }}{% if not forloop.last %}, {% endif %}{% endfor %}.
+                    </p>
+                {% endif %}
+            </section>
+        {% endif %}
+    </main>
+
+    {# ================= BARRA LATERAL ================= #}
+    <aside class="perfil__lateral">
+        <section class="panel">
+            <h2 class="seccion-titulo">Miembros</h2>
+            <ul class="lista-lateral">
+                {% for membresia in membresias %}
+                    <li class="item-lateral">
+                        <span class="item-lateral__icono{% if membresia.rol == 'admin' %} item-lateral__icono--ok{% endif %}" aria-hidden="true">{{ membresia.usuario.username|slice:":1"|upper }}</span>
+                        <div class="item-lateral__datos">
+                            <span class="item-lateral__titulo">{{ membresia.usuario.username }}{% if membresia.usuario == user %} (tú){% endif %}</span>
+                            <span class="item-lateral__detalle">{{ membresia.get_rol_display }} · desde {{ membresia.fecha_union|date:"j M"|lower }}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <p class="nota">Para invitar a alguien, pásale el código <strong class="numeros">{{ grupo.codigo }}</strong>.</p>
+        </section>
+
+        <section class="panel">
+            <form method="post" action="{% url 'grupo_salir' grupo.pk %}" data-confirmar="¿Seguro que quieres salir de {{ grupo.nombre }}?">
+                {% csrf_token %}
+                <button type="submit" class="boton boton--peligro boton--ancho">Salir del grupo</button>
+            </form>
+            <a href="{% url 'grupos' %}" class="enlace-chico">← Volver a mis grupos</a>
+        </section>
+    </aside>
+</div>
+{% endblock %}

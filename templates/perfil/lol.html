@@ -44,7 +44,7 @@
                             <p class="panel__nota">Actualizado {{ lol.actualizado|naturaltime|lower }}</p>
                         {% endif %}
                     </div>
-                    <form method="post" action="{% url 'actualizar_estadisticas' %}">
+                    <form method="post" action="{% url 'actualizar_estadisticas' %}" data-un-solo-envio>
                         {% csrf_token %}
                         <input type="hidden" name="plataforma" value="lol">
                         <button type="submit" class="boton boton--secundario boton--chico">Actualizar</button>

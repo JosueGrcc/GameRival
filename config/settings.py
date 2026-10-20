@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     # Apps de GameRival
     'usuarios',
     'juegos',
+    'grupos',
+    'insignias',
 ]
 
 MIDDLEWARE = [
