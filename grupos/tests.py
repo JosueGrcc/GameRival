@@ -76,7 +76,7 @@ class GruposTests(TestCase):
         rango_lol(mau, 30245)
         rango_lol(self.yo, 20399)
 
-        r = self.client.get(reverse('grupo_detalle', args=[g.pk]))
+        r = self.client.get(reverse('grupo_detalle', args=[g.pk]) + '?metrica=steam_horas')
         ranking = r.context['ranking']
         self.assertEqual([f['usuario'].username for f in ranking], ['kenji', 'nova'])
         self.assertEqual([f['usuario'].username for f in r.context['sin_datos']], ['mau'])
@@ -93,7 +93,7 @@ class GruposTests(TestCase):
         for u in (self.yo, a, b, c):
             MiembroGrupo.objects.create(grupo=g, usuario=u)
         horas_steam(self.yo, '30'); horas_steam(a, '20'); horas_steam(b, '20'); horas_steam(c, '10')
-        r = self.client.get(reverse('grupo_detalle', args=[g.pk]))
+        r = self.client.get(reverse('grupo_detalle', args=[g.pk]) + '?metrica=steam_horas')
         self.assertEqual([f['puesto'] for f in r.context['ranking']], [1, 2, 2, 4])
 
     def test_salir_pasa_admin_y_borra_si_queda_vacio(self):
