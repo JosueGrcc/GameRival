@@ -61,3 +61,10 @@ document.querySelectorAll("form[data-confirmar]").forEach(function (formulario) 
         }
     });
 });
+
+// Listas desplegables que cambian la pagina al elegir una opcion (como "Comparar por" en celular).
+document.querySelectorAll("select[data-enviar-al-cambiar]").forEach(function (lista) {
+    lista.addEventListener("change", function () {
+        lista.form.submit();
+    });
+});

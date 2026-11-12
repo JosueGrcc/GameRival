@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Max
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from datetime import timedelta
 from django.utils import timezone
+from django.utils.timesince import timesince
 
 from .forms import GrupoForm, UnirseForm
 from .models import Grupo, MiembroGrupo
@@ -77,9 +78,18 @@ def detalle(request, pk):
 
     ranking, sin_datos = calcular_ranking(grupo, metrica)
     lunes = inicio_de_semana()
+
+    # actualizado = la fecha mas reciente en que se bajaron las estadisticas de sus cuentas
+    membresias = list(grupo.membresias.select_related('usuario').annotate(
+        actualizado=Max('usuario__cuentas__ultima_actualizacion'),
+    ))
+    for membresia in membresias:
+        # "3 horas", "1 dia": solo la unidad mas grande, para que se lea corto
+        membresia.actualizado_hace = timesince(membresia.actualizado, depth=1) if membresia.actualizado else None
+
     return render(request, 'grupos/detalle.html', {
         'grupo': grupo,
-        'membresias': grupo.membresias.select_related('usuario'),
+        'membresias': membresias,
         'metricas': METRICAS,
         'metrica': metrica,
         'metrica_actual': METRICAS[metrica],

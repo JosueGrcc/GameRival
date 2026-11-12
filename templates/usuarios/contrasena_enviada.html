@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block titulo %}Revisa tu correo{% endblock %}
+
+{% block cuerpo %}
+<main class="acceso">
+    <section class="tarjeta">
+        <header class="cabecera">
+            <h1 class="titulo">Revisa tu correo</h1>
+            <p class="subtitulo">
+                Si ese correo está registrado en GameRival, te llegará un link para crear una contraseña nueva.
+                El link sirve por 24 horas. Si no lo ves, revisa la carpeta de spam.
+            </p>
+        </header>
+
+        <a href="{% url 'login' %}" class="boton boton--secundario boton--ancho">Volver a iniciar sesión</a>
+    </section>
+</main>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block titulo %}Contraseña cambiada{% endblock %}
+
+{% block cuerpo %}
+<main class="acceso">
+    <section class="tarjeta">
+        <header class="cabecera">
+            <h1 class="titulo">Listo</h1>
+            <p class="subtitulo">Tu contraseña se cambió. Ya puedes entrar con la nueva.</p>
+        </header>
+        <a href="{% url 'login' %}" class="boton boton--principal boton--ancho">Iniciar sesión</a>
+    </section>
+</main>
+{% endblock %}

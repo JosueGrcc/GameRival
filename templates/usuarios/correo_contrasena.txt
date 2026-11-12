@@ -1,0 +1,11 @@
+Hola, {{ user.username }}:
+
+Alguien pidió cambiar la contraseña de tu cuenta de GameRival. Si fuiste tú, abre este link para crear una nueva:
+
+{{ protocol }}://{{ domain }}{% url 'contrasena_nueva' uidb64=uid token=token %}
+
+El link sirve por 24 horas y solo se puede usar una vez.
+
+Si no fuiste tú, ignora este correo: tu contraseña sigue igual.
+
+— GameRival

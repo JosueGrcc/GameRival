@@ -39,7 +39,14 @@ def sincronizar_steam(cuenta):
             _guardar_horas(snapshot, 'horas_totales', dato['playtime_forever'])
             _guardar_horas(snapshot, 'horas_2_semanas', dato.get('playtime_2weeks', 0))
 
+        _marcar_actualizada(cuenta)
+
     return len(jugados)
+
+
+def _marcar_actualizada(cuenta):
+    cuenta.ultima_actualizacion = timezone.now()
+    cuenta.save(update_fields=['ultima_actualizacion'])
 
 
 def _guardar_horas(snapshot, nombre, minutos):
@@ -175,6 +182,8 @@ def sincronizar_lol(cuenta, cantidad=20):
                 nombre=nombre,
                 defaults={'valor': Decimal(str(valor)).quantize(Decimal('0.01'))},
             )
+
+        _marcar_actualizada(cuenta)
 
     return len(nuevas)
 

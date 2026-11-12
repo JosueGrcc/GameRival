@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from usuarios import riot, steam
+from usuarios.errores import mensaje_para
 
 from .estadisticas import sincronizar_lol, sincronizar_steam
 
@@ -23,7 +24,7 @@ def actualizar(request):
         try:
             nuevas = sincronizar_lol(cuenta)
         except riot.ErrorRiot as error:
-            messages.error(request, str(error))
+            messages.error(request, mensaje_para(request.user, error))
         else:
             messages.success(request, f'Listo: {nuevas} partidas nuevas de League of Legends.')
         return redirect(destino)
@@ -35,7 +36,7 @@ def actualizar(request):
     try:
         cantidad = sincronizar_steam(cuenta)
     except steam.ErrorSteam as error:
-        messages.error(request, str(error))
+        messages.error(request, mensaje_para(request.user, error))
     else:
         messages.success(request, f'Listo: se actualizaron {cantidad} juegos de Steam.')
     return redirect(destino)

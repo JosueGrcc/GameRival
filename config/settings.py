@@ -151,5 +151,23 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'inicio'
 LOGOUT_REDIRECT_URL = 'login'
 
+# Correo, para "¿Olvidaste tu contraseña?".
+# Si el .env no tiene EMAIL_HOST, el correo no se manda: se imprime en la terminal de runserver
+# (sirve para probar en tu compu sin configurar nada).
+if os.getenv('EMAIL_HOST'):
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.getenv('EMAIL_HOST')
+    EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+    DEFAULT_FROM_EMAIL = f'GameRival <{EMAIL_HOST_USER}>'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'GameRival <no-responder@gamerival.local>'
+
+# El link para cambiar la contrasena sirve por 1 dia
+PASSWORD_RESET_TIMEOUT = 60 * 60 * 24
+
 STEAM_API_KEY = os.getenv('STEAM_API_KEY', '')
 RIOT_API_KEY = os.getenv('RIOT_API_KEY', '')

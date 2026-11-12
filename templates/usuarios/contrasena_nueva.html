@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block titulo %}Nueva contraseña{% endblock %}
+
+{% block cuerpo %}
+<main class="acceso">
+    <section class="tarjeta">
+        {% if validlink %}
+            <header class="cabecera">
+                <h1 class="titulo">Nueva contraseña</h1>
+                <p class="subtitulo">Escribe tu contraseña nueva dos veces para confirmarla.</p>
+            </header>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% include "partes/campo.html" with campo=form.new_password1 etiqueta="Contraseña nueva" tipo="password" icono="iconos/llave.html" ayuda="Mínimo 8 caracteres" autocompletar="new-password" contrasena=True %}
+                {% include "partes/campo.html" with campo=form.new_password2 etiqueta="Confirmar contraseña" tipo="password" icono="iconos/llave.html" ayuda="Repite tu contraseña" autocompletar="new-password" contrasena=True %}
+                <button type="submit" class="boton boton--principal boton--ancho">Guardar contraseña</button>
+            </form>
+        {% else %}
+            <header class="cabecera">
+                <h1 class="titulo">Este link ya no sirve</h1>
+                <p class="subtitulo">Ya se usó o pasaron más de 24 horas. Pide uno nuevo.</p>
+            </header>
+            <a href="{% url 'contrasena_olvide' %}" class="boton boton--principal boton--ancho">Pedir otro link</a>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

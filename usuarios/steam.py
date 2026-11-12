@@ -4,10 +4,15 @@ from urllib.parse import urlencode
 import requests
 from django.conf import settings
 
+from .errores import ErrorExterno
+
 STEAM_OPENID = 'https://steamcommunity.com/openid/login'
 STEAM_API = 'https://api.steampowered.com'
 
-class ErrorSteam(Exception):
+NO_DISPONIBLE = 'Las estadísticas de Steam no están disponibles por el momento. Intenta más tarde.'
+
+
+class ErrorSteam(ErrorExterno):
     """Algo salio mal al hablar con Steam. El mensaje se le puede mostrar a la persona."""
 
 
@@ -67,7 +72,7 @@ def nombre_de_perfil(steam_id):
 def juegos_de(steam_id):
     """Regresa la lista de juegos de la cuenta, con sus minutos jugados."""
     if not settings.STEAM_API_KEY:
-        raise ErrorSteam('Falta configurar la llave de la API de Steam en el archivo .env.')
+        raise ErrorSteam(NO_DISPONIBLE, 'Falta STEAM_API_KEY en el archivo .env.')
 
     try:
         respuesta = requests.get(
@@ -81,12 +86,16 @@ def juegos_de(steam_id):
             timeout=15,
         )
     except requests.RequestException:
-        raise ErrorSteam('No pudimos comunicarnos con Steam. Intenta de nuevo en un momento.')
+        raise ErrorSteam('No pudimos comunicarnos con Steam. Intenta de nuevo en un momento.', 'Sin conexion con api.steampowered.com.')
 
     if respuesta.status_code in (401, 403):
-        raise ErrorSteam('Steam no aceptó la llave de la API. Revisa la que pusiste en el .env.')
+        raise ErrorSteam(
+            NO_DISPONIBLE,
+            f'Steam rechazo la STEAM_API_KEY (HTTP {respuesta.status_code}). Revisa la del .env '
+            'o saca otra en https://steamcommunity.com/dev/apikey',
+        )
     if respuesta.status_code != 200:
-        raise ErrorSteam('Steam respondió con un error. Intenta de nuevo más tarde.')
+        raise ErrorSteam('Steam respondió con un error. Intenta de nuevo más tarde.', f'GetOwnedGames respondio HTTP {respuesta.status_code}.')
 
     datos = respuesta.json().get('response', {})
     if 'games' not in datos:

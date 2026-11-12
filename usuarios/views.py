@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from . import riot, steam
+from .errores import mensaje_para
 from .forms import RegistroForm, RiotForm
 from .models import CuentaVinculada
 from juegos.estadisticas import perfil_lol, ultimas_estadisticas
@@ -142,7 +143,7 @@ def riot_conectar(request):
     try:
         cuenta = riot.buscar_cuenta(form.nombre, form.tag)
     except riot.ErrorRiot as error:
-        form.add_error(None, str(error))
+        form.add_error(None, mensaje_para(request.user, error))
         return _pagina_cuentas(request, form)
 
     nombre = f"{cuenta['gameName']}#{cuenta['tagLine']}"

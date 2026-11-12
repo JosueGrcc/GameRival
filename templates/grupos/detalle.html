@@ -45,6 +45,24 @@
             {% endfor %}
         </div>
     </nav>
+
+    {# En celular las pestanas no caben: se cambian por esta lista desplegable #}
+    <form method="get" class="selector-metrica">
+        <label class="selector-metrica__etiqueta" for="selector-metrica">Comparar por</label>
+        <select class="campo__select" name="metrica" id="selector-metrica" data-enviar-al-cambiar>
+            <optgroup label="Esta semana">
+                {% for clave, datos in metricas.items %}
+                    {% if datos.periodo == 'semana' %}<option value="{{ clave }}"{% if clave == metrica %} selected{% endif %}>{{ datos.titulo }}</option>{% endif %}
+                {% endfor %}
+            </optgroup>
+            <optgroup label="General">
+                {% for clave, datos in metricas.items %}
+                    {% if datos.periodo == 'general' %}<option value="{{ clave }}"{% if clave == metrica %} selected{% endif %}>{{ datos.titulo }}</option>{% endif %}
+                {% endfor %}
+            </optgroup>
+        </select>
+        <noscript><button type="submit" class="boton boton--secundario boton--chico">Ver</button></noscript>
+    </form>
 </section>
 
 <div class="perfil">
@@ -131,6 +149,9 @@
                         <div class="item-lateral__datos">
                             <span class="item-lateral__titulo">{{ membresia.usuario.username }}{% if membresia.usuario == user %} (tú){% endif %}</span>
                             <span class="item-lateral__detalle">{{ membresia.get_rol_display }} · desde {{ membresia.fecha_union|date:"j M"|lower }}</span>
+                            <span class="item-lateral__detalle">
+                                {% if membresia.actualizado_hace %}Datos de hace {{ membresia.actualizado_hace }}{% else %}Sin actualizar todavía{% endif %}
+                            </span>
                         </div>
                     </li>
                 {% endfor %}

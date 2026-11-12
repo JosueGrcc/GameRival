@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block titulo %}Recuperar contraseña{% endblock %}
+
+{% block cuerpo %}
+<main class="acceso">
+    <section class="tarjeta">
+        <header class="cabecera">
+            <h1 class="titulo">¿Olvidaste tu contraseña?</h1>
+            <p class="subtitulo">Escribe el correo con el que te registraste y te mandamos un link para crear una nueva.</p>
+        </header>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% include "partes/campo.html" with campo=form.email etiqueta="Email" tipo="email" icono="iconos/correo.html" ayuda="jugador@correo.com" autocompletar="email" %}
+            <button type="submit" class="boton boton--principal boton--ancho">Mandar link</button>
+        </form>
+
+        <div class="separador">o</div>
+
+        <p class="pie">¿Ya te acordaste? <a href="{% url 'login' %}">Inicia sesión</a></p>
+    </section>
+</main>
+{% endblock %}

@@ -24,6 +24,8 @@ class CuentaVinculada(models.Model):
     nombre_visible = models.CharField(max_length=50)
     region = models.CharField(max_length=10, blank=True)
     fecha_vinculacion = models.DateTimeField(auto_now_add=True)
+    # Cuando se bajaron sus estadisticas por ultima vez (con Actualizar o con el comando automatico)
+    ultima_actualizacion = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [

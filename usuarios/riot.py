@@ -3,6 +3,8 @@ from urllib.parse import quote
 import requests
 from django.conf import settings
 
+from .errores import ErrorExterno
+
 
 CONTINENTE_DE = {
     'la1': 'americas',
@@ -13,14 +15,17 @@ CONTINENTE_DE = {
 }
 
 
-class ErrorRiot(Exception):
+NO_DISPONIBLE = 'Las estadísticas de League of Legends no están disponibles por el momento. Intenta más tarde.'
+
+
+class ErrorRiot(ErrorExterno):
     """Algo salio mal al hablar con Riot. El mensaje se le puede mostrar a la persona."""
 
 
 def _pedir(servidor, ruta, params=None):
     """Hace una consulta a la API de Riot y regresa el JSON, o lanza ErrorRiot."""
     if not settings.RIOT_API_KEY:
-        raise ErrorRiot('Falta configurar la llave de la API de Riot en el archivo .env.')
+        raise ErrorRiot(NO_DISPONIBLE, 'Falta RIOT_API_KEY en el archivo .env.')
 
     url = f'https://{servidor}.api.riotgames.com{ruta}'
     try:
@@ -31,16 +36,20 @@ def _pedir(servidor, ruta, params=None):
             timeout=10,
         )
     except requests.RequestException:
-        raise ErrorRiot('No pudimos comunicarnos con Riot. Intenta de nuevo en un momento.')
+        raise ErrorRiot('No pudimos comunicarnos con Riot. Intenta de nuevo en un momento.', f'Sin conexion con {url}.')
 
     if respuesta.status_code == 404:
         raise ErrorRiot('Riot no encontró esa cuenta. Revisa el nombre, el tag y la región.')
     if respuesta.status_code in (401, 403):
-        raise ErrorRiot('La llave de la API de Riot no sirve o ya caducó. Genera una nueva.')
+        raise ErrorRiot(
+            NO_DISPONIBLE,
+            f'Riot rechazo la RIOT_API_KEY (HTTP {respuesta.status_code}): caduco o esta mal copiada. '
+            'Genera otra en https://developer.riotgames.com',
+        )
     if respuesta.status_code == 429:
         raise ErrorRiot('Hicimos demasiadas consultas a Riot. Espera un minuto y vuelve a intentar.')
     if respuesta.status_code != 200:
-        raise ErrorRiot('Riot respondió con un error. Intenta de nuevo más tarde.')
+        raise ErrorRiot('Riot respondió con un error. Intenta de nuevo más tarde.', f'HTTP {respuesta.status_code} en {url}.')
 
     return respuesta.json()
 
