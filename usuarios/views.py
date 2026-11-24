@@ -10,7 +10,8 @@ from . import riot, steam
 from .errores import mensaje_para
 from .forms import RegistroForm, RiotForm
 from .models import CuentaVinculada
-from juegos.estadisticas import perfil_lol, ultimas_estadisticas
+from juegos.models import Juego
+from juegos.estadisticas import RAREZAS, logros_de_usuarios, perfil_lol, rareza_promedio, ultimas_estadisticas
 from insignias.reglas import revisar_insignias
 from insignias.views import avisar_nuevas
 
@@ -73,6 +74,24 @@ def inicio(request):
             'horas_totales': sum(fila['horas'] for fila in filas),
             'horas_recientes': sum(fila['horas_recientes'] for fila in filas),
             'actualizado': max((fila['fecha'] for fila in filas), default=None),
+        })
+
+        # Logros mas raros, con los filtros que eligio la persona
+        rareza = request.GET.get('rareza', 'todos')
+        if rareza not in RAREZAS:
+            rareza = 'todos'
+        juego_id = request.GET.get('juego', '')
+        juego_id = int(juego_id) if juego_id.isdigit() else None
+
+        mis_logros = logros_de_usuarios([request.user])
+        contexto.update({
+            'rarezas': RAREZAS,
+            'rareza': rareza,
+            'juego_filtro': juego_id,
+            'juegos_con_logros': Juego.objects.filter(logros__cuenta__usuario=request.user).distinct().order_by('nombre'),
+            'logros': logros_de_usuarios([request.user], rareza, juego_id)[:12],
+            'total_logros': mis_logros.count(),
+            'rareza_promedio': rareza_promedio(request.user),
         })
 
     return render(request, 'inicio.html', contexto)

@@ -77,6 +77,82 @@
                 </div>
             {% endif %}
         </section>
+
+        {# ================= LOGROS MAS RAROS ================= #}
+        <section class="panel" id="logros">
+            <div class="panel__cabeza">
+                <div>
+                    <h2 class="seccion-titulo">Mis logros más raros</h2>
+                    <p class="panel__nota">
+                        {% if total_logros %}
+                            {{ total_logros }} logro{{ total_logros|pluralize }} de tus juegos más jugados
+                        {% else %}
+                            Los logros que menos jugadores tienen
+                        {% endif %}
+                    </p>
+                </div>
+                {% if steam %}
+                    <form method="post" action="{% url 'actualizar_estadisticas' %}" data-un-solo-envio>
+                        {% csrf_token %}
+                        <input type="hidden" name="plataforma" value="logros">
+                        <button type="submit" class="boton boton--secundario boton--chico">Actualizar logros</button>
+                    </form>
+                {% endif %}
+            </div>
+
+            {% if total_logros %}
+                {% if rareza_promedio is not None %}
+                    <div class="rareza-resumen">
+                        <span class="rareza-resumen__valor numeros">{{ rareza_promedio|floatformat:2 }}%</span>
+                        <span class="rareza-resumen__texto">
+                            Rareza promedio de tus 10 logros más difíciles.
+                            Entre más bajo, más difíciles son: con este número te comparas en tus grupos.
+                        </span>
+                    </div>
+                {% endif %}
+
+                <form method="get" action="#logros" class="filtros">
+                    <input type="hidden" name="plataforma" value="steam">
+                    <label class="filtros__campo">
+                        <span class="filtros__etiqueta">Rareza</span>
+                        <select class="campo__select" name="rareza" data-enviar-al-cambiar>
+                            {% for clave, datos in rarezas.items %}
+                                <option value="{{ clave }}"{% if clave == rareza %} selected{% endif %}>{{ datos.0 }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label class="filtros__campo">
+                        <span class="filtros__etiqueta">Juego</span>
+                        <select class="campo__select" name="juego" data-enviar-al-cambiar>
+                            <option value="">Todos los juegos</option>
+                            {% for juego in juegos_con_logros %}
+                                <option value="{{ juego.id }}"{% if juego.id == juego_filtro %} selected{% endif %}>{{ juego.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <noscript><button type="submit" class="boton boton--secundario boton--chico">Filtrar</button></noscript>
+                </form>
+
+                {% if logros %}
+                    <ol class="logros">
+                        {% for logro in logros %}
+                            {% include "partes/logro.html" %}
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <div class="vacio">No tienes logros con ese filtro. Prueba con una rareza más alta u otro juego.</div>
+                {% endif %}
+            {% elif steam %}
+                <div class="vacio">
+                    Dale a <strong>Actualizar logros</strong> para traer los logros de tus juegos más jugados.
+                    Tarda unos segundos porque se revisa juego por juego.
+                </div>
+            {% else %}
+                <div class="vacio">
+                    <a href="{% url 'cuentas' %}">Vincula tu cuenta de Steam</a> para ver tus logros más raros.
+                </div>
+            {% endif %}
+        </section>
     </main>
 
     {# ================= BARRA LATERAL ================= #}

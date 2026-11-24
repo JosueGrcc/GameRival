@@ -7,6 +7,8 @@ from datetime import timedelta
 from django.utils import timezone
 from django.utils.timesince import timesince
 
+from juegos.estadisticas import RAREZAS, logros_de_usuarios
+
 from .forms import GrupoForm, UnirseForm
 from .models import Grupo, MiembroGrupo
 from .ranking import METRICAS, calcular_ranking, inicio_de_semana
@@ -87,7 +89,24 @@ def detalle(request, pk):
         # "3 horas", "1 dia": solo la unidad mas grande, para que se lea corto
         membresia.actualizado_hace = timesince(membresia.actualizado, depth=1) if membresia.actualizado else None
 
+    # Pestana de logros: el logro mas dificil de cada quien y la lista de todo el grupo
+    logros_grupo = None
+    rareza = request.GET.get('rareza', 'todos')
+    if rareza not in RAREZAS:
+        rareza = 'todos'
+    if metrica == 'steam_logros':
+        usuarios = [membresia.usuario for membresia in membresias]
+        mas_dificil = {}
+        for logro in logros_de_usuarios(usuarios):
+            mas_dificil.setdefault(logro.cuenta.usuario_id, logro)  # ya vienen ordenados
+        for fila in ranking:
+            fila['logro'] = mas_dificil.get(fila['usuario'].id)
+        logros_grupo = logros_de_usuarios(usuarios, rareza)[:15]
+
     return render(request, 'grupos/detalle.html', {
+        'rarezas': RAREZAS,
+        'rareza': rareza,
+        'logros_grupo': logros_grupo,
         'grupo': grupo,
         'membresias': membresias,
         'metricas': METRICAS,

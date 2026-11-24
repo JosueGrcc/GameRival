@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from usuarios import riot, steam
 
-from .models import EstadisticaSnapshot, Juego, MetricaSnapshot, PartidaLoL
+from .models import EstadisticaSnapshot, Juego, LogroSteam, MetricaSnapshot, PartidaLoL
 
 PORTADA_STEAM = 'https://cdn.akamai.steamstatic.com/steam/apps/{}/header.jpg'
 
@@ -84,6 +84,89 @@ def ultimas_estadisticas(usuario):
 
     filas.sort(key=lambda fila: fila['horas'], reverse=True)
     return filas
+
+# ===================== Logros de Steam =====================
+
+JUEGOS_CON_LOGROS = 10   # solo se revisan tus juegos mas jugados, porque es una llamada por juego
+LOGROS_PARA_PROMEDIO = 10
+
+# Filtro de rareza: clave -> (texto, porcentaje maximo)
+RAREZAS = {
+    'todos': ('Todos', None),
+    'raros': ('Raros (menos de 10%)', 10),
+    'muy_raros': ('Muy raros (menos de 5%)', 5),
+    'ultra': ('Ultra raros (menos de 1%)', 1),
+}
+
+
+def sincronizar_logros(cuenta, cuantos=JUEGOS_CON_LOGROS):
+    """Baja los logros desbloqueados de tus juegos mas jugados. Regresa cuantos logros guardo."""
+    juegos = [fila['juego'] for fila in ultimas_estadisticas(cuenta.usuario)[:cuantos]]
+
+    nuevos = []
+    for juego in juegos:
+        obtenidos = steam.logros_de(cuenta.id_externo, juego.id_externo)
+        if not obtenidos:
+            continue  # el juego no tiene logros o no has sacado ninguno
+        info = steam.info_de_logros(juego.id_externo)
+        rareza = steam.rareza_de_logros(juego.id_externo)
+
+        for logro in obtenidos:
+            clave = logro['clave']
+            if clave not in rareza:
+                continue  # sin porcentaje no se puede saber que tan dificil es
+            datos = info.get(clave, {})
+            nuevos.append(LogroSteam(
+                cuenta=cuenta,
+                juego=juego,
+                clave=clave[:100],
+                nombre=(datos.get('nombre') or clave)[:150],
+                descripcion=(datos.get('descripcion') or '')[:255],
+                icono_url=(datos.get('icono') or '')[:300],
+                rareza=Decimal(str(rareza[clave])).quantize(Decimal('0.01')),
+                fecha=datetime.fromtimestamp(logro['fecha'], tz=zona_utc.utc) if logro['fecha'] else None,
+            ))
+
+    # Se borran los logros viejos de esos juegos y se guardan los nuevos de un jalon
+    with transaction.atomic():
+        cuenta.logros.filter(juego__in=juegos).delete()
+        LogroSteam.objects.bulk_create(nuevos)
+        _marcar_actualizada(cuenta)
+
+    return len(nuevos)
+
+
+def logros_de_usuarios(usuarios, rareza='todos', juego_id=None):
+    """Logros de una o varias personas, del mas dificil al mas facil, con el filtro aplicado."""
+    logros = (
+        LogroSteam.objects
+        .filter(cuenta__usuario__in=usuarios)
+        .select_related('juego', 'cuenta__usuario')
+        .order_by('rareza', '-fecha')
+    )
+    maximo = RAREZAS.get(rareza, RAREZAS['todos'])[1]
+    if maximo is not None:
+        logros = logros.filter(rareza__lt=maximo)
+    if juego_id:
+        logros = logros.filter(juego_id=juego_id)
+    return logros
+
+
+def rareza_promedio(usuario):
+    """Promedio de rareza de tus 10 logros mas dificiles. None si no tienes logros.
+
+    Entre MAS BAJO, mas dificiles son tus logros: un 2% quiere decir que, en promedio,
+    solo 2 de cada 100 jugadores tienen esos logros.
+    """
+    valores = list(
+        LogroSteam.objects
+        .filter(cuenta__usuario=usuario)
+        .order_by('rareza')
+        .values_list('rareza', flat=True)[:LOGROS_PARA_PROMEDIO]
+    )
+    if not valores:
+        return None
+    return (sum(valores) / len(valores)).quantize(Decimal('0.01'))
 
 # ===================== League of Legends =====================
 

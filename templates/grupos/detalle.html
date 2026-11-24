@@ -123,6 +123,9 @@
                             <span class="ranking__puesto ranking__puesto--{{ fila.puesto }}">{{ fila.puesto }}</span>
                             <span class="ranking__nombre">
                                 {{ fila.usuario.username }}{% if fila.usuario == user %} <span class="ranking__tu">Tú</span>{% endif %}
+                                {% if fila.logro %}
+                                    <span class="ranking__extra">Su más difícil: {{ fila.logro.nombre }} ({{ fila.logro.juego.nombre }}, {{ fila.logro.rareza|floatformat:2 }}%)</span>
+                                {% endif %}
                             </span>
                             <span class="ranking__valor numeros">{{ fila.texto }}</span>
                         </li>
@@ -133,6 +136,42 @@
                         Sin datos:
                         {% for fila in sin_datos %}{{ fila.usuario.username }}{% if not forloop.last %}, {% endif %}{% endfor %}.
                     </p>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        {% if metrica == 'steam_logros' %}
+            {# ================= LOGROS MAS DIFICILES DEL GRUPO ================= #}
+            <section class="panel" id="logros">
+                <div class="panel__cabeza panel__cabeza--envuelve">
+                    <div>
+                        <h2 class="seccion-titulo">Los logros más difíciles del grupo</h2>
+                        <p class="panel__nota">Todos los logros de los miembros, del más raro al más común</p>
+                    </div>
+                    <form method="get" action="#logros" class="filtros filtros--chico">
+                        <input type="hidden" name="metrica" value="steam_logros">
+                        <label class="filtros__campo">
+                            <span class="filtros__etiqueta">Rareza</span>
+                            <select class="campo__select" name="rareza" data-enviar-al-cambiar>
+                                {% for clave, datos in rarezas.items %}
+                                    <option value="{{ clave }}"{% if clave == rareza %} selected{% endif %}>{{ datos.0 }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <noscript><button type="submit" class="boton boton--secundario boton--chico">Filtrar</button></noscript>
+                    </form>
+                </div>
+
+                {% if logros_grupo %}
+                    <ol class="logros">
+                        {% for logro in logros_grupo %}
+                            {% include "partes/logro.html" with con_dueno=True %}
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <div class="vacio">
+                        Nadie tiene logros con ese filtro. Cada quien tiene que darle <strong>Actualizar logros</strong> en su perfil.
+                    </div>
                 {% endif %}
             </section>
         {% endif %}

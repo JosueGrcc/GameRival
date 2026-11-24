@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 from usuarios import riot, steam
 from usuarios.errores import mensaje_para
 
-from .estadisticas import sincronizar_lol, sincronizar_steam
+from .estadisticas import sincronizar_logros, sincronizar_lol, sincronizar_steam
 
 
 @login_required
@@ -33,6 +33,22 @@ def actualizar(request):
     if cuenta is None:
         messages.error(request, 'Primero vincula tu cuenta de Steam.')
         return redirect('cuentas')
+
+    if plataforma == 'logros':
+        try:
+            cantidad = sincronizar_logros(cuenta)
+        except steam.ErrorSteam as error:
+            messages.error(request, mensaje_para(request.user, error))
+        else:
+            if cantidad:
+                messages.success(request, f'Listo: {cantidad} logros de tus juegos más jugados.')
+            else:
+                messages.info(
+                    request,
+                    'No encontramos logros en tus juegos más jugados. Revisa que en Steam tengas '
+                    '"Detalles de juego" en Público y vuelve a intentar.',
+                )
+        return redirect(f'{destino}#logros')
     try:
         cantidad = sincronizar_steam(cuenta)
     except steam.ErrorSteam as error:

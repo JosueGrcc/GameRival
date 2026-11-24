@@ -27,6 +27,8 @@
     --azul-chip: #c7e3f7;
     --verde: #a8d26a;          /* en linea, mejoras, completado */
     --rojo-riot: #e8735f;      /* derrotas y acento de Riot */
+    --oro: #e5b143;            /* logros ultra raros (menos de 1%) */
+    --morado: #b591ef;         /* logros muy raros (menos de 5%) */
 
     --error: #f08a7a;
     --error-fondo: #2a1b20;
@@ -1549,6 +1551,173 @@ a:hover {
     font-size: 13px;
 }
 
+
+/* ---------- Logros de Steam (perfil y grupo) ---------- */
+.panel__cabeza--envuelve {
+    flex-wrap: wrap;
+}
+
+.rareza-resumen {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    background: var(--fondo-hondo);
+    border: 1px solid var(--borde);
+}
+
+.rareza-resumen__valor {
+    color: var(--oro);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.rareza-resumen__texto {
+    color: var(--texto-suave);
+    font-size: 13px;
+}
+
+.filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.filtros__campo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 200px;
+    flex: 1;
+}
+
+.filtros--chico .filtros__campo {
+    min-width: 210px;
+    flex: 0 1 auto;
+}
+
+.filtros__etiqueta {
+    color: var(--texto-suave);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.filtros .campo__select {
+    height: 38px;
+}
+
+.logros {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* El borde izquierdo cambia de color segun que tan raro es el logro */
+.logro {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px 10px 10px;
+    background: var(--fondo-hondo);
+    border: 1px solid var(--borde);
+    border-left: 3px solid var(--borde-fuerte);
+}
+
+.logro--raro { border-left-color: var(--azul); }
+.logro--muy-raro { border-left-color: var(--morado); }
+.logro--ultra { border-left-color: var(--oro); }
+
+.logro__icono {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    background: var(--panel);
+}
+
+.logro__icono--vacio {
+    display: grid;
+    place-items: center;
+    color: var(--texto-tenue);
+    font-size: 20px;
+}
+
+.logro__datos {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.logro__nombre {
+    color: var(--blanco);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.logro__juego {
+    color: var(--texto-suave);
+    font-size: 13px;
+}
+
+.logro__dueno {
+    color: var(--azul-claro);
+}
+
+.logro__dueno--tu {
+    color: var(--verde);
+}
+
+.logro__descripcion {
+    color: var(--texto-tenue);
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.logro__rareza {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.logro__porcentaje {
+    color: var(--texto-fuerte);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.logro--raro .logro__porcentaje { color: var(--azul-claro); }
+.logro--muy-raro .logro__porcentaje { color: var(--morado); }
+.logro--ultra .logro__porcentaje { color: var(--oro); }
+
+.logro__etiqueta,
+.logro__fecha {
+    color: var(--texto-tenue);
+    font-size: 11px;
+}
+
+.ranking__extra {
+    display: block;
+    color: var(--texto-suave);
+    font-size: 12px;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* ---------- Pantallas medianas: la barra lateral baja ---------- */
 @media (max-width: 980px) {
     .perfil {
@@ -1717,4 +1886,28 @@ a:hover {
 .boton:disabled {
     opacity: 0.6;
     cursor: wait;
+}
+
+/* Logros en pantallas chicas: el porcentaje baja abajo del nombre */
+@media (max-width: 560px) {
+    .logro {
+        grid-template-columns: 40px 1fr;
+    }
+
+    .logro__icono {
+        width: 40px;
+        height: 40px;
+    }
+
+    .logro__rareza {
+        grid-column: 2;
+        flex-direction: row;
+        align-items: baseline;
+        gap: 6px;
+    }
+
+    .rareza-resumen {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }

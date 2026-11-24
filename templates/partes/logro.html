@@ -1,0 +1,22 @@
+{# Un logro de Steam. Recibe: logro (y opcional: con_dueno) #}
+<li class="logro logro--{{ logro.nivel }}">
+    {% if logro.icono_url %}
+        <img class="logro__icono" src="{{ logro.icono_url }}" alt="" loading="lazy" data-portada>
+    {% else %}
+        <span class="logro__icono logro__icono--vacio" aria-hidden="true">★</span>
+    {% endif %}
+
+    <div class="logro__datos">
+        <span class="logro__nombre">{{ logro.nombre }}</span>
+        <span class="logro__juego">
+            {{ logro.juego.nombre }}{% if con_dueno %} · <strong class="logro__dueno{% if logro.cuenta.usuario == user %} logro__dueno--tu{% endif %}">{% if logro.cuenta.usuario == user %}Tú{% else %}{{ logro.cuenta.usuario.username }}{% endif %}</strong>{% endif %}
+        </span>
+        {% if logro.descripcion %}<span class="logro__descripcion">{{ logro.descripcion }}</span>{% endif %}
+    </div>
+
+    <div class="logro__rareza">
+        <span class="logro__porcentaje numeros">{{ logro.rareza|floatformat:2 }}%</span>
+        <span class="logro__etiqueta">de los jugadores</span>
+        {% if logro.fecha %}<span class="logro__fecha">{{ logro.fecha|date:"j M Y"|lower }}</span>{% endif %}
+    </div>
+</li>

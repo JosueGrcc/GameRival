@@ -98,3 +98,41 @@ class PartidaLoL(models.Model):
     @property
     def minutos(self):
         return self.duracion // 60
+
+class LogroSteam(models.Model):
+    """Un logro de Steam que la persona ya desbloqueo, con que tan raro es."""
+    cuenta = models.ForeignKey(
+        'usuarios.CuentaVinculada',
+        on_delete=models.CASCADE,
+        related_name='logros',
+    )
+    juego = models.ForeignKey(Juego, on_delete=models.CASCADE, related_name='logros')
+    clave = models.CharField(max_length=100, help_text='Nombre interno del logro en Steam (apiname)')
+    nombre = models.CharField(max_length=150)
+    descripcion = models.CharField(max_length=255, blank=True)
+    icono_url = models.URLField(max_length=300, blank=True)
+    rareza = models.DecimalField(
+        max_digits=5, decimal_places=2,
+        help_text='Porcentaje de jugadores de ese juego que tienen el logro. Menos = mas dificil.',
+    )
+    fecha = models.DateTimeField(null=True, blank=True, help_text='Cuando lo desbloqueo')
+
+    class Meta:
+        ordering = ['rareza', '-fecha']
+        constraints = [
+            models.UniqueConstraint(fields=['cuenta', 'juego', 'clave'], name='logro_unico_por_cuenta'),
+        ]
+
+    def __str__(self):
+        return f'{self.nombre} ({self.rareza}%)'
+
+    @property
+    def nivel(self):
+        """Que tan raro es, en palabras. Se usa para el color de la etiqueta."""
+        if self.rareza < 1:
+            return 'ultra'
+        if self.rareza < 5:
+            return 'muy-raro'
+        if self.rareza < 10:
+            return 'raro'
+        return 'comun'

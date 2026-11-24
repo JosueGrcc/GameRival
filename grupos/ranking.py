@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from django.utils import timezone
 
-from juegos.estadisticas import numero_a_rango, ultimas_estadisticas
+from juegos.estadisticas import numero_a_rango, rareza_promedio, ultimas_estadisticas
 from juegos.models import EstadisticaSnapshot, MetricaSnapshot, PartidaLoL
 
 METRICAS = {
@@ -15,6 +15,13 @@ METRICAS = {
     'lol_rango': {'titulo': 'Rango LoL', 'detalle': 'Clasificatoria Solo/Dúo', 'periodo': 'general'},
     'lol_winrate': {'titulo': 'Winrate LoL', 'detalle': 'Últimas 20 partidas', 'periodo': 'general'},
     'lol_kda': {'titulo': 'KDA LoL', 'detalle': 'Últimas 20 partidas', 'periodo': 'general'},
+    # orden 'menor': aqui gana el numero MAS BAJO (menos % de jugadores = logro mas dificil)
+    'steam_logros': {
+        'titulo': 'Logros',
+        'detalle': 'Promedio de rareza de sus 10 logros más difíciles. Entre menos %, más difíciles',
+        'periodo': 'general',
+        'orden': 'menor',
+    },
 }
 # Que metrica guardada en MetricaSnapshot corresponde a cada opcion de LoL
 METRICA_LOL = {
@@ -73,6 +80,9 @@ def valor_de(usuario, metrica):
         return victorias_de_la_semana(usuario, inicio_de_semana())
 
     """El numero con el que se compara a esta persona. None si no tiene datos."""
+    if metrica == 'steam_logros':
+        return rareza_promedio(usuario)
+
     if metrica == 'steam_horas':
         filas = ultimas_estadisticas(usuario)
         return sum(fila['horas_recientes'] for fila in filas) if filas else None
@@ -99,6 +109,8 @@ def como_texto(metrica, valor):
         return numero_a_rango(valor)
     if metrica == 'lol_winrate':
         return f'{valor:.0f}%'
+    if metrica == 'steam_logros':
+        return f'{valor:.2f}%'
     return f'{valor:.2f}'
 
 
@@ -111,14 +123,15 @@ def calcular_ranking(grupo, metrica):
             'valor': valor_de(membresia.usuario, metrica),
         })
 
+    gana_el_menor = METRICAS[metrica].get('orden') == 'menor'
     con_datos = sorted(
         (fila for fila in filas if fila['valor'] is not None),
         key=lambda fila: fila['valor'],
-        reverse=True,
+        reverse=not gana_el_menor,
     )
     sin_datos = [fila for fila in filas if fila['valor'] is None]
 
-    mas_alto = con_datos[0]['valor'] if con_datos else 0
+    mejor = con_datos[0]['valor'] if con_datos else 0
     for posicion, fila in enumerate(con_datos, start=1):
         # Si empata con el de arriba, comparten lugar (1, 2, 2, 4...)
         if posicion > 1 and fila['valor'] == con_datos[posicion - 2]['valor']:
@@ -126,6 +139,10 @@ def calcular_ranking(grupo, metrica):
         else:
             fila['puesto'] = posicion
         fila['texto'] = como_texto(metrica, fila['valor'])
-        fila['porcentaje'] = round(fila['valor'] / mas_alto * 100) if mas_alto else 0
+        # Altura de la barra: el mejor tiene la barra completa
+        if gana_el_menor:
+            fila['porcentaje'] = round(mejor / fila['valor'] * 100) if fila['valor'] else 100
+        else:
+            fila['porcentaje'] = round(fila['valor'] / mejor * 100) if mejor else 0
 
     return con_datos, sin_datos
